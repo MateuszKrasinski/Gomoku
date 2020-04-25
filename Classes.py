@@ -42,6 +42,7 @@ class Game:
         self.fourWhiteInCol = 0
         self.fourWhiteInRow = 0
         self.importantMoves = set()
+        self.optionalMoves=[set() for i in range(maxDepth+1)]
 
     def checkRows(self):
         self.fourBlackInRow = 0
@@ -295,7 +296,7 @@ class Game:
         else:
             return False
 
-    def addNeighbours(self, i, j):
+    def addNeighbours(self, i, j,depth):
         if i > 0 and j > 0 and i < BOARDSIZE - 1 and j < BOARDSIZE - 1:
             self.b.square[i + 1][j + 1].numberOfNeighboursWhite += 1
             self.b.square[i + 1][j].numberOfNeighboursWhite += 1
@@ -305,6 +306,14 @@ class Game:
             self.b.square[i - 1][j + 1].numberOfNeighboursWhite += 1
             self.b.square[i - 1][j].numberOfNeighboursWhite += 1
             self.b.square[i - 1][j - 1].numberOfNeighboursWhite += 1
+            self.optionalMoves[depth].add((i + 1,j + 1))
+            self.optionalMoves[depth].add((i + 1,j))
+            self.optionalMoves[depth].add((i + 1,j-1))
+            self.optionalMoves[depth].add((i ,j -1))
+            self.optionalMoves[depth].add((i ,j + 1))
+            self.optionalMoves[depth].add((i - 1,j + 1))
+            self.optionalMoves[depth].add((i - 1,j ))
+            self.optionalMoves[depth].add((i - 1,j - 1))
 
     def minusNeighbours(self, i, j):
         if i > 0 and j > 0 and i < BOARDSIZE - 1 and j < BOARDSIZE - 1:
@@ -337,7 +346,7 @@ class Game:
             self.onMove = "white"
             pygame.draw.circle(screen, (255, 255, 255), (700 + 30, 200 + 30), 30)
         self.moveNumber = self.moveNumber + 1
-        self.addNeighbours(i, j)
+        self.addNeighbours(i, j,0)
 
     def miniMax(self, b, depth, depthMax, isMaximizing, alpha, beta):
         if self.checkWin():
@@ -363,7 +372,7 @@ class Game:
             for i, j in minMaxSet:
                 self.b.square[i][j].value = "black"
                 self.moveNumber = self.moveNumber + 1
-                self.addNeighbours(i, j)
+                self.addNeighbours(i, j,depth+1)
                 score = self.miniMax(b, depth + 1, maxDepth, False, alpha, beta)
                 self.minusNeighbours(i, j)
                 self.b.square[i][j].value = "_"
@@ -380,7 +389,7 @@ class Game:
             for i, j in minMaxSet:
                 self.b.square[i][j].value = "white"
                 self.moveNumber = self.moveNumber + 1
-                self.addNeighbours(i, j)
+                self.addNeighbours(i, j,depth+1)
                 score = self.miniMax(b, depth + 1, maxDepth, True, alpha, beta)
                 self.minusNeighbours(i, j)
                 self.b.square[i][j].value = "_"
@@ -404,7 +413,7 @@ class Game:
         for i, j in forcedSet:
             self.b.square[i][j].value = "white"
             self.moveNumber = self.moveNumber + 1
-            self.addNeighbours(i, j)
+            self.addNeighbours(i, j,1)
             score = self.miniMax(self.b, 0, 0, True, -math.inf, math.inf)
             self.minusNeighbours(i, j)
             self.b.square[i][j].value = "_"
@@ -420,7 +429,7 @@ class Game:
                 # print("Time spent forced winning move in depth 0 na b[{}][{}] : {}".format(i, j, time.time() - timeStart))
                 self.b.square[i][j].value = "black"
                 self.moveNumber = self.moveNumber + 1
-                self.addNeighbours(i, j)
+                self.addNeighbours(i, j,1)
                 score = self.miniMax(self.b, 0, 0, False, -math.inf, math.inf)
                 self.minusNeighbours(i, j)
                 self.b.square[i][j].value = "_"
@@ -443,12 +452,21 @@ class Game:
         else:
             startTime = time.time()
             secik = self.sort(self.importantMoves)
-            print("Important moves", secik)
+            print("{}Important moves{}".format( len(secik),secik))
+            print(" Optional moves:",end="  ")
+            it=0
+            for i,j in self.optionalMoves[0]:
+                if self.b.square[i][j]!="_":
+                    it+=1
+                    print(".(",i,",",j,")",end=" ")
+            print("\nNumber of optimal moves:",it)
+            print()
+            #print("{} Optional moves:{}".format(len(self.optionalMoves[0]), self.optionalMoves[0]))
             for i, j, z in secik:
                 if self.b.square[i][j].value == "_" and (time.time() - startTime < maxMoveTime or bestScore == WHITE_WIN):
                     self.b.square[i][j].value = "black"
                     self.moveNumber = self.moveNumber + 1
-                    self.addNeighbours(i, j)
+                    self.addNeighbours(i, j, 1)
                     score = self.miniMax(self.b, 0, maxDepth, False, -math.inf, math.inf)
                     self.minusNeighbours(i, j)
                     self.b.square[i][j].value = "_"

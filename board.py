@@ -1,31 +1,34 @@
 import pygame
-import Globals
-
-
+from Globals import screen,screenHeight,screenWidth,BOARDSIZE,squareWidth,squareMargin
+pygame.init()
+def message(what, x, y):
+    font = pygame.font.Font("freesansbold.ttf", 26)
+    text = font.render(what, True, (0, 128, 0))
+    screen.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
 class Square:
-    margin = Globals.squareMargin
-    width = Globals.squareWidth
-    left = int(Globals.screenWidth / 2 - Globals.BOARDSIZE * (width / 2 + margin))
-    up = int(Globals.screenHeight / 2 - Globals.BOARDSIZE * (width / 2 + margin))
+    margin = squareMargin
+    width = squareWidth
+    left = int(screenWidth / 2 - BOARDSIZE * (width / 2 + margin))
+    up = int(screenHeight / 2 - BOARDSIZE * (width / 2 + margin))
     numberOfNeighboursWhite = 0
     numberOfNeighboursBlack = 0
     value = "_"
-    graphic = pygame.draw.rect(Globals.screen, (0, 255, 255),
+    graphic = pygame.draw.rect(screen, (0, 255, 255),
                                (width + margin + left, width + margin + up, width, width))
 
     def emptySquare(self, j, i):
-        self.graphic = pygame.draw.rect(Globals.screen, (102, 51, 0),
+        self.graphic = pygame.draw.rect(screen, (102, 51, 0),
                                         (i * self.width + i * self.margin + self.left,
                                          j * self.width + j * self.margin + self.up, self.width, self.width))
 
     def whiteSquare(self, j, i):
-        self.graphic = pygame.draw.circle(Globals.screen, (255, 255, 255),
+        self.graphic = pygame.draw.circle(screen, (255, 255, 255),
                                           (i * self.width + i * self.margin + self.left + self.width // 2,
                                            j * self.width + j * self.margin + self.up + self.width // 2),
                                           self.width // 2)
 
     def blackSquare(self, j, i):
-        self.graphic = pygame.draw.circle(Globals.screen, (0, 0, 0),
+        self.graphic = pygame.draw.circle(screen, (0, 0, 0),
                                           (i * self.width + i * self.margin + self.left + self.width // 2,
                                            j * self.width + j * self.margin + self.up + self.width // 2),
                                           self.width // 2)
@@ -33,9 +36,15 @@ class Square:
 
 class Board:
     def __init__(self):
-        self.square = [[Square() for i in range(Globals.BOARDSIZE)] for j in range(Globals.BOARDSIZE)]
-
+        self.square = [[Square() for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
+        self.margin = squareMargin
+        self.width = squareWidth
+        self.left = int(screenWidth / 2 - BOARDSIZE * (self.width / 2 + self.margin))
+        self.up = int(screenHeight / 2 - BOARDSIZE * (self.width / 2 + self.margin))
     def draw(self):
-        for i in range(0, Globals.BOARDSIZE):
-            for j in range(0, Globals.BOARDSIZE):
+        for i in range(BOARDSIZE):
+            message("{}".format(i), self.left +15 + i * 33, self.up -30)
+        for i in range(0, BOARDSIZE):
+            for j in range(0, BOARDSIZE):
                 self.square[i][j].emptySquare(i, j)
+            message("{}".format(i),self.left-30,self.up+15+i*33)
