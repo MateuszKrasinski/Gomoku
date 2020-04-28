@@ -23,24 +23,6 @@ class Game:
         self.moveNumber = 1
         self.b = board.Board()
         self.onMove = "white"
-        self.twoWhiteInRow = 0
-        self.twoWhiteInCol = 0
-        self.twoWhiteInDiagonal = 0
-        self.twoBlackInDiagonal = 0
-        self.twoBlackInRow = 0
-        self.twoBlackInCol = 0
-        self.threeWhiteInRow = 0
-        self.threeWhiteInCol = 0
-        self.threeWhiteInDiagonal = 0
-        self.threeBlackInDiagonal = 0
-        self.threeBlackInRow = 0
-        self.threeBlackInCol = 0
-        self.fourBlackInCol = 0
-        self.fourBlackInRow = 0
-        self.fourBlackInDiagonal = 0
-        self.fourWhiteInDiagonal = 0
-        self.fourWhiteInCol = 0
-        self.fourWhiteInRow = 0
         self.importantMoves = set()
         self.optionalMoves=[set() for i in range(maxDepth+1)]
 
@@ -51,49 +33,33 @@ class Game:
         self.threeBlackInRow = 0
         self.twoWhiteInRow = 0
         self.twoBlackInRow = 0
-        rowScore = 1
         for i in range(0, BOARDSIZE):
             rowScore = 1
             for j in range(1, BOARDSIZE):
                 if self.b.square[i][j].value == self.b.square[i][j - 1].value != "_":
-                    rowScore = rowScore + 1
+                    rowScore += 1
+                else:
                     if rowScore == WIN:
                         return True
-                    if rowScore == 2:
-                        if self.b.square[i][j + 1].value == "_" and self.b.square[i][j - 2].value == "_":
-                            if self.b.square[i][j].value == "white":
-                                self.twoWhiteInRow += 1
-                            else:
-                                self.twoBlackInRow += 1
-                    if rowScore == 3:
-                        if self.b.square[i][j + 1].value == "_" and self.b.square[i][j - 3].value == "_":
-                            if self.b.square[i][j].value == "white":
-                                self.threeWhiteInRow += 1
-                            else:
-                                self.threeBlackInRow += 1
-                    if rowScore == 4:
-                        if self.b.square[i][j + 1].value == "_" or self.b.square[i][j - 4].value == "_":
-                            if self.b.square[i][j].value == "white":
-                                self.fourWhiteInRow += 1
-                            else:
-                                self.fourBlackInRow += 1
-                            self.importantMoves.add((i, j + 1, 23412342))
-                            self.importantMoves.add((i, j - 3, 23412342))
-                else:
+                    elif rowScore == 4:
+                        if self.b.square[i][j].value == "white":
+                            self.fourWhiteInRow += 1
+                        else:
+                            self.fourBlackInRow += 1
+                    elif rowScore == 3:
+                        if self.b.square[i][j].value == "white":
+                            self.threeWhiteInRow += 1
+                        else:
+                            self.threeBlackInRow += 1
+                    elif rowScore == 2:
+                        if self.b.square[i][j].value == "white":
+                            self.twoWhiteInRow += 1
+                        else:
+                            self.twoBlackInRow += 1
                     rowScore = 1
-                    """
-        print()
-        print("Number of two black in rows:", self.twoBlackInRow)
-        print("Number of two white in rows:", self.twoWhiteInRow)
-        print("Number of three black in rows:", self.threeBlackInRow)
-        print("Number of three white in rows:", self.threeWhiteInRow)
-        print("Number of four white  in rows:", self.fourWhiteInRow)
-        print("Number of four blacks in rows:", self.fourBlackInRow)
-        """
         return False
 
     def checkCols(self):
-        colScore = 1
         self.twoWhiteInCol = 0
         self.twoBlackInCol = 0
         self.threeWhiteInCol = 0
@@ -104,38 +70,26 @@ class Game:
             colScore = 1
             for i in range(1, BOARDSIZE):
                 if self.b.square[i][j].value == self.b.square[i - 1][j].value != "_":
-                    colScore = colScore + 1
+                    colScore += 1
+                else:
                     if colScore == WIN:
                         return True
-                    if colScore == 2 and self.b.square[i + 1][j].value == "_" and self.b.square[i - 2][j].value == "_":
+                    elif colScore == 2:
                         if self.b.square[i][j].value == "white":
                             self.twoWhiteInCol += 1
                         else:
                             self.twoBlackInCol += 1
-                    if colScore == 3 and self.b.square[i + 1][j].value == "_" and self.b.square[i - 3][j].value == "_":
-                        # print("Jestem tu3")
+                    elif colScore == 3:
                         if self.b.square[i][j].value == "white":
                             self.threeWhiteInCol += 1
                         else:
                             self.threeBlackInCol += 1
-                        self.importantMoves.add((i + 1, j, 10101010))
-                        self.importantMoves.add((i - 3, j, 1010101))
-                    if colScore == 4 and (self.b.square[i + 1][j].value == "_" or self.b.square[i - 4][j].value == "_"):
-                        #  print("Jestem tu4")
+                    elif colScore == 4:
                         if self.b.square[i][j].value == "white":
                             self.fourWhiteInCol += 1
                         else:
                             self.fourBlackInCol += 1
-                else:
                     colScore = 1
-        """
-        print("Number of two white in cols:", self.twoWhiteInCol)
-        print("Number of two black in cols:", self.twoBlackInCol)
-        print("Number of three white in cols:", self.threeWhiteInCol)
-        print("Number of three black in cols:", self.threeBlackInCol)
-        print("Number of four white in cols:", self.fourWhiteInCol)
-        print("Number of four black in cols:", self.fourBlackInCol)
-        """
         return False
 
     def checkDiagonal(self):
@@ -151,27 +105,25 @@ class Game:
             diagonalScore = 1
             for j in range(1, BOARDSIZE - i):
                 if self.b.square[j + i][j].value == self.b.square[j + i - 1][j - 1].value != "_":
-                    diagonalScore = diagonalScore + 1
+                    diagonalScore += 1
+                else:
                     if diagonalScore == WIN:
                         return True
-                    if diagonalScore == 2 and self.b.square[j + i + 1][j + 1].value == "_" and self.b.square[j + i - 2][j - 2].value == "_":
+                    elif diagonalScore == 2:
                         if self.b.square[j + i][j].value == "white":
                             self.twoWhiteInDiagonal += 1
                         else:
                             self.twoBlackInDiagonal += 1
-                    if diagonalScore == 3 and self.b.square[j + i + 1][j + 1].value == "_" and self.b.square[j + i - 3][j - 3].value == "_":
+                    elif diagonalScore == 3:
                         if self.b.square[j + i][j].value == "white":
                             self.threeWhiteInDiagonal += 1
                         else:
                             self.threeBlackInDiagonal += 1
-                    if diagonalScore == 4 and (self.b.square[j + i + 1][j + 1].value == "_" or self.b.square[j + i - 4][j - 4].value == "_"):
+                    elif diagonalScore == 4:
                         if self.b.square[j + i][j].value == "white":
                             self.fourWhiteInDiagonal += 1
                         else:
                             self.fourBlackInDiagonal += 1
-                        self.importantMoves.add((j + i + 1, j + 1, 123456))
-                        self.importantMoves.add((j + i - 3, j - 3, 123456))
-                else:
                     diagonalScore = 1
         # 2\
         diagonalScore = 1
@@ -180,98 +132,77 @@ class Game:
             for j in range(1, BOARDSIZE - i):
                 if self.b.square[j][j + i].value == self.b.square[j - 1][j + i - 1].value != "_":
                     diagonalScore = diagonalScore + 1
+                else:
                     if diagonalScore == WIN:
                         return True
-                    if diagonalScore == 2 and self.b.square[j + 1][j + i + 1].value == "_" and self.b.square[j - 2][j + i - 2].value == "_":
+                    elif diagonalScore == 2:
                         if self.b.square[j][j + i].value == "white":
                             self.twoWhiteInDiagonal += 1
                         else:
                             self.twoBlackInDiagonal = +1
-                    if diagonalScore == 3 and self.b.square[j + 1][j + i + 1].value == "_" and self.b.square[j - 3][j + i - 3].value == "_":
+                    elif diagonalScore == 3:
                         if self.b.square[j][j + i].value == "white":
                             self.threeWhiteInDiagonal += 1
                         else:
                             self.threeBlackInDiagonal = +1
-                    if diagonalScore == 4 and (self.b.square[j + 1][j + i + 1].value == "_" or self.b.square[j - 4][j + i - 4].value == "_"):
+                    elif diagonalScore == 4:
                         if self.b.square[j][j + i].value == "white":
                             self.fourWhiteInDiagonal += 1
                         else:
                             self.fourBlackInDiagonal += 1
-                        self.importantMoves.add((j + 1, j + i + 1, 1234567))
-                        self.importantMoves.add((j - 3, j + i - 3, 1234567))
-
-                else:
                     diagonalScore = 1
         # 3/
-        diagonalScore = 1
         for i in range(1, BOARDSIZE):
             diagonalScore = 1
             for j in range(0, i):
                 if self.b.square[i - j][j].value == self.b.square[i - j - 1][j + 1].value != "_":
-                    diagonalScore = diagonalScore + 1
+                    diagonalScore += 1
+                else:
                     if diagonalScore == WIN:
                         return True
-                    if diagonalScore == 2 and self.b.square[i - j + 1][j - 1].value == "_" and self.b.square[i - j - 2][j + 2].value == "_":
+                    elif diagonalScore == 2:
                         if self.b.square[i - j][j].value == "white":
                             self.twoWhiteInDiagonal += 1
                         else:
                             self.twoBlackInDiagonal += 1
-                    if diagonalScore == 3 and self.b.square[i - j + 1][j - 1].value == "_" and self.b.square[i - j - 3][j + 3].value == "_":
+                    elif diagonalScore == 3:
                         if self.b.square[i - j][j].value == "white":
                             self.threeWhiteInDiagonal += 1
                         else:
                             self.threeBlackInDiagonal += 1
-                    if diagonalScore == 4 and (self.b.square[i - j + 1][j - 1].value == "_" or self.b.square[i - j - 4][j + 4].value == "_"):
+                    elif diagonalScore == 4:
                         if self.b.square[i - j][j].value == "white":
                             self.fourWhiteInDiagonal += 1
                         else:
                             self.fourBlackInDiagonal += 1
-                        self.importantMoves.add((i - j + 1, j - 1, 12345678))
-                        self.importantMoves.add((i - j - 3, j + 3, 12345678))
-                else:
                     diagonalScore = 1
 
         # 4
-        diagonalScore = 1
         for i in range(0, BOARDSIZE):
             diagonalScore = 1
             for j in range(BOARDSIZE - 1, i, -1):
                 if self.b.square[i + (BOARDSIZE - 1) - j][j].value == \
                         self.b.square[i + (BOARDSIZE - 1) - j + 1][j - 1].value != "_":
-                    diagonalScore = diagonalScore + 1
+                    diagonalScore += 1
+                else:
                     if diagonalScore == WIN:
                         return True
-                    if diagonalScore == 2 and self.b.square[i + (BOARDSIZE - 1) - j + 2][j - 2].value != "_" \
-                            and self.b.square[i + (BOARDSIZE - 1) - j - 1][j + 1].value != "_":
+                    elif diagonalScore == 2:
                         if self.b.square[i + (BOARDSIZE - 1) - j][j].value == "white":
                             self.twoWhiteInDiagonal += 1
                         else:
                             self.twoBlackInDiagonal += 1
-                    if diagonalScore == 3 and self.b.square[i + (BOARDSIZE - 1) - j + 3][j - 3].value != "_" \
-                            and self.b.square[i + (BOARDSIZE - 1) - j - 1][j + 1].value != "_":
+                    elif diagonalScore == 3:
                         if self.b.square[i + (BOARDSIZE - 1) - j][j].value == "white":
                             self.threeWhiteInDiagonal += 1
                         else:
                             self.threeBlackInDiagonal += 1
-                    if diagonalScore == 4 and (self.b.square[i + (BOARDSIZE - 1) - j - 1][j + 1].value != "_" \
-                                               or self.b.square[i + (BOARDSIZE - 1) - j + 4][j - 4].value != "_"):
+                    elif diagonalScore == 4:
                         if self.b.square[i + (BOARDSIZE - 1) - j][j].value == "white":
                             self.fourWhiteInDiagonal += 1
                         else:
                             self.fourBlackInDiagonal += 1
-                        self.importantMoves.add((i + (BOARDSIZE - 1) - j - 1, j + 1, IMPORTANT))
-                        self.importantMoves.add((i + (BOARDSIZE - 1) - j + 3, j - 3, IMPORTANT))
-
-                else:
                     diagonalScore = 1
-        """
-        print("Number of two white in digonal:", self.twoWhiteInDiagonal)
-        print("Number of two black in digonal:", self.twoBlackInDiagonal)
-        print("Number of three white in digonal:", self.threeWhiteInDiagonal)
-        print("Number of three black in digonal:", self.threeBlackInDiagonal)
-        print("Number of four white in digonal:", self.fourWhiteInDiagonal)
-        print("Number of four black in digonal:", self.fourBlackInDiagonal)
-        """
         return False
 
     def messageWin(self):
@@ -406,7 +337,6 @@ class Game:
         return (sorted(sub_li, key=lambda x: x[2], reverse=True))
 
     def forcedMove(self):
-        timeStart = time.time()
         forcedSet = self.bSet()
         # checking winning force move
         print("Checking if there is forced move...")
@@ -422,46 +352,37 @@ class Game:
                 print("Forced defensive move ! Wykonano ruch na b[{}][{}] Bestscore=={}".format(i, j, score))
                 self.makeMove(i, j)
                 return True
-        print("Not found defensive forced move in depth 0 in time:", time.time() - timeStart)
-        if self.moveNumber > 0:
-            self.importantMoves.clear()
-            for i, j in forcedSet:
-                # print("Time spent forced winning move in depth 0 na b[{}][{}] : {}".format(i, j, time.time() - timeStart))
-                self.b.square[i][j].value = "black"
-                self.moveNumber = self.moveNumber + 1
-                self.addNeighbours(i, j,1)
-                score = self.miniMax(self.b, 0, 0, False, -math.inf, math.inf)
-                self.minusNeighbours(i, j)
-                self.b.square[i][j].value = "_"
-                self.moveNumber = self.moveNumber - 1
-                self.importantMoves.add((i, j, score))
-                if score == BLACK_WIN:
-                    print("Forced winning move ! Wykonano ruch na b[{}][{}] Bestscore=={}".format(i, j, score))
-                    self.makeMove(i, j)
-                    return True
-            print("Not found winning forced move in depth 0")
+        print("Not found defensive forced move in depth 0 in time:")
+        self.importantMoves.clear()
+        for i, j in forcedSet:
+            # print("Time spent forced winning move in depth 0 na b[{}][{}] : {}".format(i, j, time.time() - timeStart))
+            self.b.square[i][j].value = "black"
+            self.moveNumber = self.moveNumber + 1
+            self.addNeighbours(i, j,1)
+            score = self.miniMax(self.b, 0, 0, False, -math.inf, math.inf)
+            self.minusNeighbours(i, j)
+            self.b.square[i][j].value = "_"
+            self.moveNumber = self.moveNumber - 1
+            self.importantMoves.add((i, j, score))
+            if score == BLACK_WIN:
+                print("Forced winning move ! Wykonano ruch na b[{}][{}] Bestscore=={}".format(i, j, score))
+                self.makeMove(i, j)
+                return True
+        print("Not found winning forced move in depth 0")
         return False
 
     def playBest(self):
         bestScore = -math.inf
         iMax = 0
         jMax = 0
-        stop = False
         if self.forcedMove():
             pass
         else:
             startTime = time.time()
             secik = self.sort(self.importantMoves)
             print("{}Important moves{}".format( len(secik),secik))
-            print(" Optional moves:",end="  ")
-            it=0
-            for i,j in self.optionalMoves[0]:
-                if self.b.square[i][j]!="_":
-                    it+=1
-                    print(".(",i,",",j,")",end=" ")
-            print("\nNumber of optimal moves:",it)
+            print("{}Optional moves{}".format( len(self.optionalMoves[0]),self.optionalMoves[0]))
             print()
-            #print("{} Optional moves:{}".format(len(self.optionalMoves[0]), self.optionalMoves[0]))
             for i, j, z in secik:
                 if self.b.square[i][j].value == "_" and (time.time() - startTime < maxMoveTime or bestScore == WHITE_WIN):
                     self.b.square[i][j].value = "black"
