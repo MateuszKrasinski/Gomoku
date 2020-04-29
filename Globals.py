@@ -1,8 +1,8 @@
 import pygame
-maxDepth=3
+maxDepth=4
 BOARDSIZE =15  # stala rozmiar planszy
 WIN =5# stala wygrana
-maxMoveTime=4
+maxMoveTime=6
 squareWidth=30
 squareMargin=3
 screenWidth = 800

@@ -3,6 +3,7 @@ import board
 from Globals import BOARDSIZE, WIN, screenWidth, screenHeight, screen, maxDepth, maxMoveTime
 from pygame import mixer
 import random
+import copy
 
 IMPORTANT = math.inf
 WHITE_WIN = -10000
@@ -24,7 +25,9 @@ class Game:
         self.b = board.Board()
         self.onMove = "white"
         self.importantMoves = set()
-        self.optionalMoves=[set() for i in range(maxDepth+1)]
+        self.PlayedMoves = set()
+        self.PredictedMoves = set()
+        self.optionalMoves = [set() for i in range(maxDepth + 1)]
 
     def checkRows(self):
         self.fourBlackInRow = 0
@@ -42,20 +45,23 @@ class Game:
                     if rowScore == WIN:
                         return True
                     elif rowScore == 4:
-                        if self.b.square[i][j].value == "white":
-                            self.fourWhiteInRow += 1
-                        else:
-                            self.fourBlackInRow += 1
+                        if self.b.square[i][j + 1].value == "_" or self.b.square[i][j - 4].value == "_":
+                            if self.b.square[i][j].value == "white":
+                                self.fourWhiteInRow += 1
+                            else:
+                                self.fourBlackInRow += 1
                     elif rowScore == 3:
-                        if self.b.square[i][j].value == "white":
-                            self.threeWhiteInRow += 1
-                        else:
-                            self.threeBlackInRow += 1
+                        if self.b.square[i][j + 1].value == "_" and self.b.square[i][j - 3].value == "_":
+                            if self.b.square[i][j].value == "white":
+                                self.threeWhiteInRow += 1
+                            else:
+                                self.threeBlackInRow += 1
                     elif rowScore == 2:
-                        if self.b.square[i][j].value == "white":
-                            self.twoWhiteInRow += 1
-                        else:
-                            self.twoBlackInRow += 1
+                        if self.b.square[i][j + 1].value == "_" and self.b.square[i][j - 2].value == "_":
+                            if self.b.square[i][j].value == "white":
+                                self.twoWhiteInRow += 1
+                            else:
+                                self.twoBlackInRow += 1
                     rowScore = 1
         return False
 
@@ -80,15 +86,17 @@ class Game:
                         else:
                             self.twoBlackInCol += 1
                     elif colScore == 3:
-                        if self.b.square[i][j].value == "white":
-                            self.threeWhiteInCol += 1
-                        else:
-                            self.threeBlackInCol += 1
+                        if self.b.square[i + 1][j].value == "_" and self.b.square[i - 3][j].value == "_":
+                            if self.b.square[i][j].value == "white":
+                                self.threeWhiteInCol += 1
+                            else:
+                                self.threeBlackInCol += 1
                     elif colScore == 4:
-                        if self.b.square[i][j].value == "white":
-                            self.fourWhiteInCol += 1
-                        else:
-                            self.fourBlackInCol += 1
+                        if self.b.square[i + 1][j].value == "_" or self.b.square[i - 4][j].value == "_":
+                            if self.b.square[i][j].value == "white":
+                                self.fourWhiteInCol += 1
+                            else:
+                                self.fourBlackInCol += 1
                     colScore = 1
         return False
 
@@ -227,43 +235,17 @@ class Game:
         else:
             return False
 
-    def addNeighbours(self, i, j,depth):
-        if i > 0 and j > 0 and i < BOARDSIZE - 1 and j < BOARDSIZE - 1:
-            self.b.square[i + 1][j + 1].numberOfNeighboursWhite += 1
-            self.b.square[i + 1][j].numberOfNeighboursWhite += 1
-            self.b.square[i + 1][j - 1].numberOfNeighboursWhite += 1
-            self.b.square[i][j + 1].numberOfNeighboursWhite += 1
-            self.b.square[i][j - 1].numberOfNeighboursWhite += 1
-            self.b.square[i - 1][j + 1].numberOfNeighboursWhite += 1
-            self.b.square[i - 1][j].numberOfNeighboursWhite += 1
-            self.b.square[i - 1][j - 1].numberOfNeighboursWhite += 1
-            self.optionalMoves[depth].add((i + 1,j + 1))
-            self.optionalMoves[depth].add((i + 1,j))
-            self.optionalMoves[depth].add((i + 1,j-1))
-            self.optionalMoves[depth].add((i ,j -1))
-            self.optionalMoves[depth].add((i ,j + 1))
-            self.optionalMoves[depth].add((i - 1,j + 1))
-            self.optionalMoves[depth].add((i - 1,j ))
-            self.optionalMoves[depth].add((i - 1,j - 1))
+    def addNeighbours(self, i, j, depth):
+        if i>0 and j>0 and j<BOARDSIZE-1 and i<BOARDSIZE-1:
+            self.Neihbours = {(i + 1, j + 1), (i + 1, j - 1), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j + 1), (i - 1, j - 1), (i - 1, j)}
+        self.optionalMoves[depth] = self.optionalMoves[depth - 1].union(self.Neihbours.difference(self.optionalMoves[depth-1]))
+        self.optionalMoves[depth].difference_update(self.PlayedMoves)
+        self.PredictedMoves.add((i, j))
+        self.optionalMoves[depth].difference_update((self.PredictedMoves))
 
-    def minusNeighbours(self, i, j):
-        if i > 0 and j > 0 and i < BOARDSIZE - 1 and j < BOARDSIZE - 1:
-            self.b.square[i + 1][j + 1].numberOfNeighboursWhite -= 1
-            self.b.square[i + 1][j].numberOfNeighboursWhite -= 1
-            self.b.square[i + 1][j - 1].numberOfNeighboursWhite -= 1
-            self.b.square[i][j + 1].numberOfNeighboursWhite -= 1
-            self.b.square[i][j - 1].numberOfNeighboursWhite -= 1
-            self.b.square[i - 1][j + 1].numberOfNeighboursWhite -= 1
-            self.b.square[i - 1][j].numberOfNeighboursWhite -= 1
-            self.b.square[i - 1][j - 1].numberOfNeighboursWhite -= 1
-
-    def bSet(self):
-        secik = set()
-        for i in range(15):
-            for j in range(15):
-                if self.b.square[i][j].numberOfNeighboursWhite > 0 and self.b.square[i][j].value == "_":
-                    secik.add((i, j))
-        return secik
+    def minusNeighbours(self, i, j, depth):
+        self.optionalMoves[depth] = copy.deepcopy(self.optionalMoves[depth - 1])
+        self.PredictedMoves.remove((i,j))
 
     def makeMove(self, i, j):
         if self.onMove == "white":
@@ -277,7 +259,10 @@ class Game:
             self.onMove = "white"
             pygame.draw.circle(screen, (255, 255, 255), (700 + 30, 200 + 30), 30)
         self.moveNumber = self.moveNumber + 1
-        self.addNeighbours(i, j,0)
+        self.addNeighbours(i, j, 0)
+        self.optionalMoves[1]=copy.deepcopy(self.optionalMoves[2])
+        self.optionalMoves[2]=copy.deepcopy(self.optionalMoves[3])
+        self.PlayedMoves.add((i, j))
 
     def miniMax(self, b, depth, depthMax, isMaximizing, alpha, beta):
         if self.checkWin():
@@ -297,15 +282,16 @@ class Game:
                     + (self.twoWhiteInRow + self.twoWhiteInCol + self.twoWhiteInDiagonal) * (-10)
                     + (self.twoBlackInRow + self.twoBlackInCol + self.twoBlackInDiagonal) * (10)
             )
-        minMaxSet = self.bSet()
+        minMaxSet = self.optionalMoves[depth]
+        #minMaxSet.difference_update(self.PlayedMoves)
         if isMaximizing:
             bestScore = -math.inf
             for i, j in minMaxSet:
                 self.b.square[i][j].value = "black"
                 self.moveNumber = self.moveNumber + 1
-                self.addNeighbours(i, j,depth+1)
+                self.addNeighbours(i, j, depth + 1)
                 score = self.miniMax(b, depth + 1, maxDepth, False, alpha, beta)
-                self.minusNeighbours(i, j)
+                self.minusNeighbours(i, j, depth + 1)
                 self.b.square[i][j].value = "_"
                 self.moveNumber = self.moveNumber - 1
                 bestScore = max(score, bestScore)
@@ -320,9 +306,9 @@ class Game:
             for i, j in minMaxSet:
                 self.b.square[i][j].value = "white"
                 self.moveNumber = self.moveNumber + 1
-                self.addNeighbours(i, j,depth+1)
+                self.addNeighbours(i, j, depth + 1)
                 score = self.miniMax(b, depth + 1, maxDepth, True, alpha, beta)
-                self.minusNeighbours(i, j)
+                self.minusNeighbours(i, j, depth + 1)
                 self.b.square[i][j].value = "_"
                 self.moveNumber = self.moveNumber - 1
                 bestScore = min(score, bestScore)
@@ -337,33 +323,25 @@ class Game:
         return (sorted(sub_li, key=lambda x: x[2], reverse=True))
 
     def forcedMove(self):
-        forcedSet = self.bSet()
-        # checking winning force move
+        forcedSet = self.optionalMoves[0]
         print("Checking if there is forced move...")
         for i, j in forcedSet:
-            self.b.square[i][j].value = "white"
-            self.moveNumber = self.moveNumber + 1
-            self.addNeighbours(i, j,1)
-            score = self.miniMax(self.b, 0, 0, True, -math.inf, math.inf)
-            self.minusNeighbours(i, j)
-            self.b.square[i][j].value = "_"
-            self.moveNumber = self.moveNumber - 1
-            if score == WHITE_WIN:
-                print("Forced defensive move ! Wykonano ruch na b[{}][{}] Bestscore=={}".format(i, j, score))
-                self.makeMove(i, j)
-                return True
+            if self.b.square[i][j].value == "_":
+                self.b.square[i][j].value = "white"
+                score = self.miniMax(self.b, 0, 0, True, -math.inf, math.inf)
+                self.b.square[i][j].value = "_"
+                if score == WHITE_WIN:
+                    print("Forced defensive move ! Wykonano ruch na b[{}][{}] Bestscore=={}".format(i, j, score))
+                    self.makeMove(i, j)
+                    return True
         print("Not found defensive forced move in depth 0 in time:")
         self.importantMoves.clear()
         for i, j in forcedSet:
-            # print("Time spent forced winning move in depth 0 na b[{}][{}] : {}".format(i, j, time.time() - timeStart))
-            self.b.square[i][j].value = "black"
-            self.moveNumber = self.moveNumber + 1
-            self.addNeighbours(i, j,1)
-            score = self.miniMax(self.b, 0, 0, False, -math.inf, math.inf)
-            self.minusNeighbours(i, j)
-            self.b.square[i][j].value = "_"
-            self.moveNumber = self.moveNumber - 1
-            self.importantMoves.add((i, j, score))
+            if self.b.square[i][j].value == "_":
+                self.b.square[i][j].value = "black"
+                score = self.miniMax(self.b, 0, 0, False, -math.inf, math.inf)
+                self.b.square[i][j].value = "_"
+                self.importantMoves.add((i, j, score))
             if score == BLACK_WIN:
                 print("Forced winning move ! Wykonano ruch na b[{}][{}] Bestscore=={}".format(i, j, score))
                 self.makeMove(i, j)
@@ -380,16 +358,17 @@ class Game:
         else:
             startTime = time.time()
             secik = self.sort(self.importantMoves)
-            print("{}Important moves{}".format( len(secik),secik))
-            print("{}Optional moves{}".format( len(self.optionalMoves[0]),self.optionalMoves[0]))
-            print()
+            print("{}Important moves{}".format(len(secik), secik))
+            print("{}Optional moves{}".format(len(self.optionalMoves[0]), self.optionalMoves[0]))
+
+            # print("{} Optional moves:{}".format(len(self.optionalMoves[0]), self.optionalMoves[0]))
             for i, j, z in secik:
                 if self.b.square[i][j].value == "_" and (time.time() - startTime < maxMoveTime or bestScore == WHITE_WIN):
                     self.b.square[i][j].value = "black"
                     self.moveNumber = self.moveNumber + 1
                     self.addNeighbours(i, j, 1)
-                    score = self.miniMax(self.b, 0, maxDepth, False, -math.inf, math.inf)
-                    self.minusNeighbours(i, j)
+                    score = self.miniMax(self.b, 1, maxDepth, False, -math.inf, math.inf)
+                    self.minusNeighbours(i, j, 1)
                     self.b.square[i][j].value = "_"
                     self.moveNumber = self.moveNumber - 1
                     print("Dla b[{}][{}]  score=={}".format(i, j, score))
