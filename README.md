@@ -1,5 +1,5 @@
 # Gomoku
-Project
+Project\n
 1.Zmieniać 4 pętle w 2 pętle podczas checkDiagonal?
 2.Wykrywać sytuacje trzech w jednej lini z dwoma wolnymi opcjami i  dodawać jako pierwsze ruchy do sprawdzenia.
 3.Zastanowić się nad podziałem projektu na moduły.
