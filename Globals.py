@@ -1,5 +1,5 @@
 import pygame
-maxDepth=4
+maxDepth=6
 BOARDSIZE =15  # stala rozmiar planszy
 WIN =5# stala wygrana
 maxMoveTime=6
