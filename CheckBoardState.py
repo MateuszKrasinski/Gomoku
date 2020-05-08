@@ -1,4 +1,5 @@
 from  Globals import BOARDSIZE,WIN
+"""This Class checking win and draw and evaluate position"""
 class CheckBoardState:
     def __init__(self,board):
         self.b=board
@@ -174,7 +175,6 @@ class CheckBoardState:
                         if self.b.square[i + j + 1][BOARDSIZE - 2 - j].value == "_" \
                                 and self.b.square[i + j - 3][BOARDSIZE - j + 2].value == "_":
                             if self.b.square[i - j][BOARDSIZE - 1 - j].value == "white":
-                                print("Hello")
                                 self.threeStones += 1
                             else:
                                 self.threeStones -= 1

@@ -4,9 +4,7 @@ from  CheckBoardState import CheckBoardState
 from Globals import BOARDSIZE, WIN, screenWidth, screenHeight, screen, maxDepth, maxMoveTime
 from AI import AI
 
-IMPORTANT = math.inf
-WHITE_WIN = -100000
-BLACK_WIN = 100000
+
 
 class Game:
     def __init__(self):
@@ -55,7 +53,7 @@ class Game:
                                     self.makeMove(i, j)
                                     pygame.display.update()
                                 if self.arbiter.checkWin(0):
-                                    self.board.messageWin()
+                                    board.messageWin()
                                     break
                                 elif self.arbiter.checkDraw(self.moveNumber):
                                     self.arbiter.draw()

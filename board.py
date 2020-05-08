@@ -2,18 +2,22 @@ import pygame
 from Globals import screen,screenHeight,screenWidth,BOARDSIZE,squareWidth,squareMargin
 pygame.init()
 pygame.display.set_caption('Gomoku')
+font = pygame.font.Font("freesansbold.ttf", 26)
 def message(what, x, y):
     font = pygame.font.Font("freesansbold.ttf", 26)
     text = font.render(what, True, (0, 128, 0))
     screen.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
-
+def messageResult(what, x, y):
+    font2 = pygame.font.Font("freesansbold.ttf", 40)
+    text = font.render(what, True, (0, 128, 0))
+    screen.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
 def messageWin():
-    message("Wygrana", int(screenWidth / 2), int(screenHeight / 2 / 5))
+    messageResult("Wygrana", int(screenWidth / 2), int(screenHeight / 3 / 5))
     #self.run = False
     pygame.display.update()
 
 def messageDraw():
-    message("Remis", int(screenWidth / 2), int(screenHeight / 2 / 5))
+    messageResult("Remis", int(screenWidth / 2), int(screenHeight / 1 / 5))
     #self.run = False
     pygame.display.update()
 class Square:
