@@ -73,10 +73,14 @@ class AI():
                 if bestScore == WHITE_WIN:
                     break
             return bestScore
+
     """sorting optional moves by evaluation of position after first predicted move"""
+
     def sortMovesByEvaluation(self, sub_li):
         return (sorted(sub_li, key=lambda x: x[2], reverse=True))
+
     """ if there is win in one move just play it else if opponent can win just move to block this move"""
+
     def forcedMove(self):
         self.importantMoves[0].clear()
         print("Checking if there is forced move...")
@@ -102,6 +106,7 @@ class AI():
         return False
 
     """Checking if there is force move else searching best move using minimax on selected initially sorted moves """
+
     def playBest(self):
         bestScore = -math.inf
         iMax = 0
@@ -137,13 +142,12 @@ class AI():
             print("Wykonano ruch na b[{}][{}] Bestscore=={}".format(iMax, jMax, bestScore))
             self.importantMoves[0].clear()
             self.PlayedMoves.add((iMax, jMax))
-            self.optionalMoves[1] = copy.deepcopy(self.optionalMoves[2])
-            self.optionalMoves[2] = copy.deepcopy(self.optionalMoves[3])
-            self.optionalMoves[3] = copy.deepcopy(self.optionalMoves[4])
-            self.optionalMoves[4] = copy.deepcopy(self.optionalMoves[5])
-            self.optionalMoves[5] = copy.deepcopy(self.optionalMoves[6])
+            for i in range(1,maxDepth):
+                self.optionalMoves[i] = copy.deepcopy(self.optionalMoves[i+1].difference_update(self.PlayedMoves))
             return iMax, jMax
+
     """Adding new squares to Optional Moves after move or in minimax predictions"""
+
     def addNeighboursSquares(self, i, j, depth):
         if i > 0 and j > 0 and j < BOARDSIZE - 1 and i < BOARDSIZE - 1:
             self.Neihbours = {(i + 1, j + 1), (i + 1, j - 1), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j + 1), (i - 1, j - 1), (i - 1, j)}
@@ -151,7 +155,9 @@ class AI():
         self.optionalMoves[depth].difference_update(self.PlayedMoves)
         self.PredictedMoves.add((i, j))
         self.optionalMoves[depth].difference_update((self.PredictedMoves))
+
     """recall changes after addNeighboursSquares in Minimax"""
+
     def removeNeighboursSquares(self, i, j, depth):
         self.optionalMoves[depth] = copy.deepcopy(self.optionalMoves[depth - 1])
         self.PredictedMoves.remove((i, j))
