@@ -11,6 +11,7 @@ class Game:
         self.run = True
         self.moveNumber = 1
         self.b = board.Board()
+        self.button=board.Button()
         self.onMove = "white"
         self.arbiter=CheckBoardState(self.b)
         self.ai=AI(self.b,self.moveNumber)
@@ -46,6 +47,9 @@ class Game:
                     sys.exit(0)
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
+                    if self.button.graphic.collidepoint(pos):
+                        print("Button was pressed")
+                        return True
                     for i in range(0, BOARDSIZE):
                         for j in range(0, BOARDSIZE):
                             if self.b.square[i][j].graphic.collidepoint(pos) and self.b.square[i][j].value == '_':
@@ -71,8 +75,3 @@ class Game:
                                     board.messageDraw()
                     pygame.display.update()
 
-
-game = Game()
-game.playgame()
-time.sleep(5)
-sys.exit(0)

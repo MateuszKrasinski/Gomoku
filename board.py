@@ -3,12 +3,16 @@ from Globals import screen,screenHeight,screenWidth,BOARDSIZE,squareWidth,square
 pygame.init()
 pygame.display.set_caption('Gomoku')
 font = pygame.font.Font("freesansbold.ttf", 26)
+def messageButton(what, x, y):
+    font = pygame.font.Font("freesansbold.ttf", 30)
+    text = font.render(what, True, (0, 0, 0))
+    screen.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
 def message(what, x, y):
     font = pygame.font.Font("freesansbold.ttf", 26)
     text = font.render(what, True, (0, 128, 0))
     screen.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
 def messageResult(what, x, y):
-    font2 = pygame.font.Font("freesansbold.ttf", 40)
+    font2 = pygame.font.Font("freesansbold.ttf", 60)
     text = font.render(what, True, (0, 128, 0))
     screen.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
 def messageWin():
@@ -47,10 +51,9 @@ class Square:
                                           (i * self.width + i * self.margin + self.left + self.width // 2,
                                            j * self.width + j * self.margin + self.up + self.width // 2),
                                           self.width // 2)
-
-
 class Board:
     def __init__(self):
+        self.button = Button()
         self.square = [[Square() for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
         self.margin = squareMargin
         self.width = squareWidth
@@ -63,3 +66,11 @@ class Board:
             for j in range(0, BOARDSIZE):
                 self.square[i][j].emptySquare(i, j)
             message("{}".format(i),self.left-30,self.up+15+i*33)
+            self.button.draw()
+
+class Button():
+    def __init__(self):
+        self.graphic=pygame.Rect(640,350,150,75)
+    def draw(self):
+        pygame.draw.rect(screen,(102, 51, 0),self.graphic)
+        messageButton("Restart", self.graphic.center[0],self.graphic.center[1])

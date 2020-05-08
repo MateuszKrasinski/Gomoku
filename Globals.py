@@ -1,10 +1,10 @@
 import pygame
 maxDepth=6
-numberOfCheckedSquares=7
-numberOfChosenToMinimax=8
+numberOfCheckedSquares=6
+numberOfChosenToMinimax=6
 BOARDSIZE =15  # stala rozmiar planszy
 WIN =5# stala wygrana
-maxMoveTime=10
+maxMoveTime=6
 squareWidth=30
 squareMargin=3
 screenWidth = 800
