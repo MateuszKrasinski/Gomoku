@@ -1,4 +1,5 @@
 from  Globals import BOARDSIZE,WIN
+import board
 """This Class checking win and draw and evaluate position"""
 class CheckBoardState:
     def __init__(self,board):
@@ -197,5 +198,13 @@ class CheckBoardState:
             return True
         else:
             return False
+    def checkBoardState(self,moveNumber):
+        if self.checkWin(0):
+            board.messageWin()
+            return True
+        elif self.checkDraw(moveNumber):
+            board.messageDraw(0)
+            return True
+        return False
     def evaluate(self,depth):
         return (self.fourStones * (-1000) + self.threeStones * (-100) + self.twoStones * (-10))
