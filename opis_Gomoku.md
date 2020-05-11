@@ -30,3 +30,5 @@ jego wygranej.
 o remisie.
 6. Ułożenie linii dłuższej niż 5 przez jednego z graczy - brak informacji o wygranej.
 7. Próba ustawienia kamienia na wcześniej ustawiony kamień- brak możliwości wykonania takiego działania.
+# Link
+https://github.com/MateuszKrasinski/Gomoku
