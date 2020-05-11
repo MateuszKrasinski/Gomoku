@@ -1,5 +1,7 @@
 # Gomoku
 # Opis zadania
+Projekt podobny do Cztery w rzędzie z listy projektów.
+https://pl.wikipedia.org/wiki/Gomoku
 1. Okno wyświetlające siatkę 15 kolumn x 15 wierszy,
 informację “Tura gracza 1” lub “Tura gracza 2”, przycisk do resetowania gry
 oraz rozwijalną listę wyboru reguł gry.
