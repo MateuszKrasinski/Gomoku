@@ -5,8 +5,8 @@ from Globals import BOARDSIZE, maxDepth, maxMoveTime, numberOfCheckedSquares, nu
 from CheckBoardState import CheckBoardState
 
 IMPORTANT = math.inf
-WHITE_WIN = -100000
-BLACK_WIN = 100000
+WHITE_WIN = -math.inf
+BLACK_WIN = math.inf
 
 
 class AI():

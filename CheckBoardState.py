@@ -198,9 +198,9 @@ class CheckBoardState:
             return True
         else:
             return False
-    def checkBoardState(self,moveNumber):
+    def checkBoardState(self,moveNumber,name):
         if self.checkWin(0):
-            board.messageWin()
+            board.messageWin(name)
             return True
         elif self.checkDraw(moveNumber):
             board.messageDraw(0)
