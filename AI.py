@@ -19,6 +19,7 @@ class AI():
         self.PredictedMoves = set()
         self.PlayedMoves=set()
 
+
     def miniMax(self, b, depth, depthMax, isMaximizing, alpha, beta):
         if self.arbiter.checkWin(depth):
             if isMaximizing:
@@ -84,6 +85,8 @@ class AI():
     def forcedMove(self):
         self.importantMoves[0].clear()
         print("Checking if there is forced move...")
+        if self.moveNumber==0:
+            self.optionalMoves[0].add((7,7))
         for i, j in self.optionalMoves[0]:
             if self.b.square[i][j].value == "_":
                 self.b.square[i][j].value = "black"
