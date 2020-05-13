@@ -1,10 +1,10 @@
-# Gomoku
+﻿# Gomoku
 # Opis zadania
 Projekt podobny do Cztery w rzędzie z listy projektów.
 https://pl.wikipedia.org/wiki/Gomoku
 1. Okno wyświetlające siatkę 15 kolumn x 15 wierszy,
 informację “Tura gracza 1” lub “Tura gracza 2”, przycisk do resetowania gry przyciski
-wyboru reguł gry, vsAi, vs Player.
+wyboru reguł gry, vsAi(Minimax algorithm), vs Player.
 2. Początkowo pola siatki są puste.
 3. Gracze na zmianę stawiają po jednym swoim kamieniu na wybrane przez siebie pole.
 4. Pola w których jest kamien gracza 1 są białe, pola z kamieniami gracza 2
