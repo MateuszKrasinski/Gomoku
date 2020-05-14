@@ -72,7 +72,13 @@ class Game:
                     print("On move:", self.onMove.name)
                     print("MOde:", self.mode)
 
-
+    def nextTurn(self):
+        if self.onMove==self.player1:
+            self.onMove=self.player2
+            self.onMoveGUI.black(self.onMove.name)
+        elif self.onMove==self.player2:
+            self.onMove=self.player1
+            self.onMoveGUI.white(self.onMove.name)
     def makeMove(self, i, j):
         print("Ruch numer:",self.moveNumber)
         if self.onMove.get_stone_color() == "white":
@@ -81,13 +87,6 @@ class Game:
         else:
             self.b.square[i][j].blackSquare(i, j)
             self.b.square[i][j].value = "black"
-        if self.onMove==self.player1:
-            self.onMove=self.player2
-            self.onMoveGUI.black(self.onMove.name)
-        elif self.onMove==self.player2:
-            self.onMove=self.player1
-            self.onMoveGUI.white(self.onMove.name)
-
         self.moveNumber += 1
         self.playedMoves.add((i,j))
         self.ai.addNeighboursSquares(i, j, 0,self.playedMoves)

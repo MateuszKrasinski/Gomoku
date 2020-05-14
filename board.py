@@ -120,17 +120,16 @@ class ChooseColor:
         self.number = number
         self.rect = pygame.Rect(screenWidth / 4.5 + number * 30 - 20, 10, 30, 30)
         self.border = pygame.Rect(screenWidth / 4.5 + number * 30 - 2 - 20, 10 - 2, 30 + 4, 30 + 4)
-
     def black(self):
         pygame.draw.rect(screen, (0, 0, 0), self.border)
         pygame.draw.rect(screen, (88, 61, 0), self.rect)
-        self.rect = pygame.draw.circle(screen, (0, 0, 0), (self.rect.center), 12)
+        pygame.draw.circle(screen, (0, 0, 0), (self.rect.center), 12)
 
     def white(self):
         message("Choose color:", leftMargin + 25, topMargin - 5)
         pygame.draw.rect(screen, (0, 0, 0), self.border)
         pygame.draw.rect(screen, (88, 61, 0), self.rect)
-        self.rect = pygame.draw.circle(screen, (255, 255, 255), self.rect.center, 12)
+        pygame.draw.circle(screen, (255, 255, 255), self.rect.center, 12)
 
 
 class ChooseOpponent():

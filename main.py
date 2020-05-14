@@ -10,15 +10,26 @@ while(True):
     game=Game()
     result = game.Menu()
     if result:
-        print("Player 1:", result[0].name)
-        print("Player 2:", result[1].name)
-        print("Na ruchu:", result[2].name)
-        print("Game rules:",result[3])
         if result[3]=="standard":
             game=standard.Standard(result[0],result[1],result[2])
+            game = True
+            while game:
+                game = standard.Standard(result[0], result[1], result[2])
+                game = game.playgame()
+                if game == "Restart":
+                    pass
+                if game == "Menu":
+                    break
         elif result[3]=="swap2":
-            game=swap2.Swap2(result[0],result[1],result[2])
-        game.playgame()
+            game=True
+            while game:
+                game=swap2.Swap2(result[0],result[1],result[2])
+                game=game.playgame()
+                if game=="Restart":
+                    pass
+                if game=="Menu":
+                    break
+
 
     pygame.display.update()
 

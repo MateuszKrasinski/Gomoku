@@ -17,8 +17,7 @@ class AI():
         self.optionalMoves = [set() for i in range(maxDepth + 1)]
         self.importantMoves = [set() for i in range(maxDepth + 1)]
         self.PredictedMoves = set()
-        self.PlayedMoves=set()
-
+        self.PlayedMoves = set()
 
     def miniMax(self, b, depth, depthMax, isMaximizing, alpha, beta):
         if self.arbiter.checkWin(depth):
@@ -34,14 +33,12 @@ class AI():
         secik = []
         if isMaximizing:
             bestScore = -math.inf
-            for i, j in minMaxSet:
-                score = self.miniMax(b, depth, depth, False, alpha, beta)
-                secik.append((i, j, score))
-                secik = self.sortMovesByEvaluation(secik)
+            [secik.append((i, j, self.miniMax(b, depth, depth, False, alpha, beta))) for i, j in minMaxSet]
+            secik = self.sortMovesByEvaluation(secik)
             for i, j, z in secik[:(numberOfCheckedSquares - depth)]:
                 self.b.square[i][j].value = "black"
                 self.moveNumber = self.moveNumber + 1
-                self.addNeighboursSquares(i, j, depth + 1,self.PlayedMoves)
+                self.addNeighboursSquares(i, j, depth + 1, self.PlayedMoves)
                 score = self.miniMax(b, depth + 1, maxDepth, False, alpha, beta)
                 self.removeNeighboursSquares(i, j, depth + 1)
                 self.b.square[i][j].value = "_"
@@ -55,14 +52,12 @@ class AI():
             return bestScore
         else:
             bestScore = math.inf
-            for i, j in minMaxSet:
-                score = self.miniMax(b, depth, depth, True, alpha, beta)
-                secik.append((i, j, score))
+            [secik.append((i, j, self.miniMax(b, depth, depth, True, alpha, beta))) for i,j in minMaxSet]
             secik = self.sortMovesByEvaluation(secik)
             for i, j, z in secik[:numberOfCheckedSquares - depth]:
                 self.b.square[i][j].value = "white"
                 self.moveNumber += 1
-                self.addNeighboursSquares(i, j, depth + 1,self.PlayedMoves)
+                self.addNeighboursSquares(i, j, depth + 1, self.PlayedMoves)
                 score = self.miniMax(b, depth + 1, maxDepth, True, alpha, beta)
                 self.removeNeighboursSquares(i, j, depth + 1)
                 self.b.square[i][j].value = "_"
@@ -75,18 +70,16 @@ class AI():
                     break
             return bestScore
 
-    """sorting optional moves by evaluation of position after first predicted move"""
 
     def sortMovesByEvaluation(self, sub_li):
         return (sorted(sub_li, key=lambda x: x[2], reverse=True))
 
-    """ if there is win in one move just play it else if opponent can win just move to block this move"""
 
     def forcedMove(self):
         self.importantMoves[0].clear()
         print("Checking if there is forced move...")
-        if self.moveNumber==0:
-            self.optionalMoves[0].add((7,7))
+        if self.moveNumber == 0 and len(self.optionalMoves[0])==0:
+            self.optionalMoves[0].add((7, 7))
         for i, j in self.optionalMoves[0]:
             if self.b.square[i][j].value == "_":
                 self.b.square[i][j].value = "black"
@@ -108,14 +101,12 @@ class AI():
         print("Not found defensive forced move in depth 0 in time:")
         return False
 
-    """Checking if there is force move else searching best move using minimax on selected initially sorted moves """
 
-    def playBest(self,playedMoves):
-        self.PlayedMoves=playedMoves
-        print("Played moves:",len(self.PlayedMoves))
+    def playBest(self, playedMoves):
+        self.PlayedMoves = playedMoves
+        bestMove = tuple()
+        print("Played moves:", len(self.PlayedMoves))
         bestScore = -math.inf
-        iMax = 0
-        jMax = 0
         if self.forcedMove() is not False:
             i, j = self.forcedMove()
             self.importantMoves[0].clear()
@@ -129,42 +120,40 @@ class AI():
                 if self.b.square[i][j].value == "_" and (time.time() - startTime < maxMoveTime or bestScore == WHITE_WIN):
                     self.b.square[i][j].value = "black"
                     self.moveNumber = self.moveNumber + 1
-                    self.addNeighboursSquares(i, j, 1,self.PlayedMoves)
+                    self.addNeighboursSquares(i, j, 1, self.PlayedMoves)
                     score = self.miniMax(self.b, 1, maxDepth, False, -math.inf, math.inf)
                     self.removeNeighboursSquares(i, j, 1)
                     self.b.square[i][j].value = "_"
                     self.moveNumber -= 1
                     print("Dla b[{}][{}]  score=={}".format(i, j, score))
                     if score == BLACK_WIN:
-                        iMax = i
-                        jMax = j
+                        bestMove = (i, j)
                         break
                     if score > bestScore:
                         bestScore = score
-                        iMax = i
-                        jMax = j
-            print("Wykonano ruch na b[{}][{}] Bestscore=={}".format(iMax, jMax, bestScore))
+                        bestMove = i, j
+            print("Wykonano ruch na b[{}][{}] Bestscore=={}".format(bestMove[0], bestMove[1], bestScore))
             self.importantMoves[0].clear()
             print("Predicted:", len(self.PredictedMoves))
-            return iMax, jMax
+            return bestMove
 
     """Adding new squares to Optional Moves after move or in minimax predictions"""
 
-    def addNeighboursSquares(self, i, j, depth,playedMoves):
+    def addNeighboursSquares(self, i, j, depth, playedMoves):
         if i > 0 and j > 0 and j < BOARDSIZE - 1 and i < BOARDSIZE - 1:
             self.Neihbours = {(i + 1, j + 1), (i + 1, j - 1), (i + 1, j), (i, j - 1), (i, j + 1), (i - 1, j + 1), (i - 1, j - 1), (i - 1, j)}
-        self.PlayedMoves=playedMoves
-        if depth==0:
-            self.optionalMoves[0]=self.optionalMoves[depth].union(self.Neihbours)
+        self.PlayedMoves = playedMoves
+        if depth == 0:
+            self.optionalMoves[0] = self.optionalMoves[depth].union(self.Neihbours)
             self.optionalMoves[depth].difference_update(self.PlayedMoves)
         elif depth != 0:
             self.PredictedMoves.add((i, j))
-            self.optionalMoves[depth] = self.optionalMoves[depth-1].union(self.Neihbours)
+            self.optionalMoves[depth] = self.optionalMoves[depth - 1].union(self.Neihbours)
             self.optionalMoves[depth].difference_update(self.PlayedMoves)
             self.optionalMoves[depth].difference_update((self.PredictedMoves))
-            #print("{}Optional moves on depth ({}): {}".format(len(self.optionalMoves[depth]),depth, self.optionalMoves[depth]))
+            # print("{}Optional moves on depth ({}): {}".format(len(self.optionalMoves[depth]),depth, self.optionalMoves[depth]))
 
-        if depth==0:
+        if depth == 0:
             print("{}Optional moves{}".format(len(self.optionalMoves[0]), self.optionalMoves[0]))
 
     """recall changes after addNeighboursSquares in Minimax"""
