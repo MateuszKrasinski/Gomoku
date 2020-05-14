@@ -83,18 +83,25 @@ class Board:
             message("{}".format(i), leftMargin + squareWidth // 2 + i * (squareWidth + squareMargin), boardWidth + topMargin + 20)
 
 
-class OnMove:
+class OnMove():
     def __init__(self):
         self.center = (boardWidth + (screenHeight - boardWidth) // 2 + screenHeight / 2)
-        self.graphic = pygame.Rect(screenWidth - rightMargin // 4, screenHeight / 3.5, rightMargin * 1 // 10, rightMargin * 1 // 10)
-        message("Turn:", screenWidth - rightMargin + rightMargin // 4, self.graphic.center[1])
-        pygame.draw.rect(screen, (129, 108, 91), self.graphic)
+        self.graphic = pygame.Rect(screenWidth - 70 , screenHeight / 3.5, rightMargin * 1 // 10, rightMargin * 1 // 10)
+        message("Turn:", self.graphic.center[0] , self.graphic.center[1]-20)
+        pygame.draw.rect(screen, (0, 108, 91), self.graphic)
+        self.graphic1 = pygame.Rect(screenWidth - rightMargin , screenHeight / 3.5, squareWidth*2.8, squareWidth/2)
 
-    def black(self):
-        self.graphic = pygame.draw.circle(screen, (0, 0, 0), self.graphic.center, squareWidth / 2.5)
+    def black(self,name):
+        pygame.draw.rect(screen, (133, 87, 35), self.graphic1)
+        message(name, screenWidth - rightMargin + rightMargin // 4+5, self.graphic1.center[1])
+        self.graphic = pygame.draw.circle(screen, (0, 0, 0), (self.graphic1.midright[0]-squareWidth/2-2,self.graphic1.midright[1]-2), squareWidth / 2.5)
+        pygame.display.update()
 
-    def white(self):
-        self.graphic = pygame.draw.circle(screen, (255, 255, 255), self.graphic.center, squareWidth / 2.5)
+    def white(self,name):
+        pygame.draw.rect(screen, (133, 87, 35), self.graphic1)
+        message(name, screenWidth - rightMargin + rightMargin // 4+5, self.graphic1.center[1])
+        self.graphic = pygame.draw.circle(screen, (255, 255, 255), (self.graphic1.midright[0]-squareWidth/2-2,self.graphic1.midright[1]-2), squareWidth / 2.5)
+        pygame.display.update()
 
 
 class Button:

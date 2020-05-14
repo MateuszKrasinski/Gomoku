@@ -16,12 +16,13 @@ class Game:
         self.buttonSettings=board.Button(1,"Menu")
         self.arbiter=CheckBoardState(self.b)
         self.ai=AI(self.b,self.moveNumber)
-        self.onMoveGUI=board.OnMove()
-        self.onMoveGUI.white()
         self.playedMoves=set()
         self.player1=Player("Gracz1","white")
         self.player2=Player("AI","black")
         self.onMove = self.player1
+        self.onMoveGUI = board.OnMove()
+        self.onMoveGUI.white(self.onMove.name)
+
         self.b1 = board.ChooseColor(0)
         self.b2 = board.ChooseColor(1)
         self.c1 = board.ChooseOpponent(0)
@@ -57,7 +58,7 @@ class Game:
                         print("Clicked c1")
                         self.player2.set_name("AI")
                     if self.c2.graphic.collidepoint(pos):
-                        self.player2.set_name("PLayer")
+                        self.player2.set_name("Gracz2")
                         print("Clicked c2")
                     if self.m1.rect.collidepoint(pos):
                         self.mode="standard"
@@ -77,15 +78,16 @@ class Game:
         if self.onMove.get_stone_color() == "white":
             self.b.square[i][j].whiteSquare(i, j)
             self.b.square[i][j].value = "white"
-            self.onMoveGUI.black()
         else:
             self.b.square[i][j].blackSquare(i, j)
             self.b.square[i][j].value = "black"
-            self.onMoveGUI.white()
         if self.onMove==self.player1:
             self.onMove=self.player2
+            self.onMoveGUI.black(self.onMove.name)
         elif self.onMove==self.player2:
             self.onMove=self.player1
+            self.onMoveGUI.white(self.onMove.name)
+
         self.moveNumber += 1
         self.playedMoves.add((i,j))
         self.ai.addNeighboursSquares(i, j, 0,self.playedMoves)

@@ -19,6 +19,12 @@ class Standard(Game.Game):
         while self.run:
             pygame.display.update()
             pygame.time.delay(100)
+            if self.onMove.name=="AI":
+                i, j = self.ai.playBest(self.playedMoves)
+                self.makeMove(i, j)
+                pygame.display.update()
+                if self.arbiter.checkBoardState(self.moveNumber, self.onMove.name):
+                    break
             # handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -34,12 +40,5 @@ class Standard(Game.Game):
                                 if self.onMove.name !="AI" :
                                     self.makeMove(i, j)
                                     pygame.display.update()
-                                else:
-                                    i,j=self.ai.playBest(self.playedMoves)
-                                    self.makeMove(i,j)
-                                    pygame.display.update()
-
-                                if self.arbiter.checkBoardState(self.moveNumber,self.onMove.name):
-                                    break
                     pygame.display.update()
 

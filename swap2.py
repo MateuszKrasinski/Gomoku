@@ -39,9 +39,11 @@ class Swap2(Game.Game):
                         if event.type == pygame.MOUSEBUTTONUP:
                             pos=pygame.mouse.get_pos()
                             if self.b1.rect.collidepoint(pos):
+                                print("Clicked b1")
                                 self.changePlayer()
                                 self.change = False
                             if self.b2.rect.collidepoint(pos):
+                                print("Clicked b1")
                                 self.change = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
