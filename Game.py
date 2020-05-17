@@ -1,34 +1,52 @@
 import pygame, sys
-import board
+import GUI
 from  CheckBoardState import CheckBoardState
-from Globals import BOARDSIZE, screen
 from AI import AI
-from Player import Player
+BOARDSIZE=15
+class Player():
+    def __init__(self, name_="Gracz", stone_="white"):
+        self.name = name_
+        self.stone_color = stone_
 
+    def get_stone_color(self):
+        return str(self.stone_color)
+
+    def stone_white(self):
+        self.stone_color = "white"
+
+    def stone_black(self):
+        self.stone_color = "black"
+
+    def get_name(self):
+        return self.name
+
+    def set_name(self, name):
+        self.name = name
 
 class Game:
     def __init__(self):
         self.run = True
         self.moveNumber = 0
-        board.Background()
-        self.b = board.Board()
-        self.buttonNewGame=board.Button(0,"New Game")
-        self.buttonSettings=board.Button(1,"Menu")
-        self.arbiter=CheckBoardState(self.b)
-        self.ai=AI(self.b,self.moveNumber)
+        GUI.Background()
+        self.board=[["_" for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
+        self.b = GUI.Board()
+        self.buttonNewGame=GUI.Button(0, "New Game")
+        self.buttonSettings=GUI.Button(1, "Menu")
+        self.arbiter=CheckBoardState(self.board)
+        self.ai=AI(self.board,self.moveNumber)
         self.playedMoves=set()
         self.player1=Player("Gracz1","white")
         self.player2=Player("AI","black")
         self.onMove = self.player1
-        self.onMoveGUI = board.OnMove()
+        self.onMoveGUI = GUI.OnMove()
         self.onMoveGUI.white(self.onMove.name)
 
-        self.b1 = board.ChooseColor(0)
-        self.b2 = board.ChooseColor(1)
-        self.c1 = board.ChooseOpponent(0)
-        self.c2 = board.ChooseOpponent(1)
-        self.m1 = board.ChooseMode(0)
-        self.m2 = board.ChooseMode(1)
+        self.b1 = GUI.ChooseColor(0)
+        self.b2 = GUI.ChooseColor(1)
+        self.c1 = GUI.ChooseOpponent(0)
+        self.c2 = GUI.ChooseOpponent(1)
+        self.m1 = GUI.ChooseMode(0)
+        self.m2 = GUI.ChooseMode(1)
         self.mode="standard"
     def Menu(self):
         self.b1.white()
@@ -83,10 +101,10 @@ class Game:
         print("Ruch numer:",self.moveNumber)
         if self.onMove.get_stone_color() == "white":
             self.b.square[i][j].whiteSquare(i, j)
-            self.b.square[i][j].value = "white"
+            self.board[i][j]="white"
         else:
             self.b.square[i][j].blackSquare(i, j)
-            self.b.square[i][j].value = "black"
+            self.board[i][j]="black"
         self.moveNumber += 1
         self.playedMoves.add((i,j))
         self.ai.addNeighboursSquares(i, j, 0,self.playedMoves)

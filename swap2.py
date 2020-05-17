@@ -1,15 +1,10 @@
-import Game
+from Game import Player, Game
 import pygame, sys
-import board
-from CheckBoardState import CheckBoardState
-from Globals import BOARDSIZE, screen
-from AI import AI
-from Player import Player
-import copy
-import Player
+
+BOARDSIZE = 15
 
 
-class Swap2(Game.Game):
+class Swap2(Game):
     def __init__(self, player1, player2, onMove):
         super(Swap2, self).__init__()
         self.player1 = player1
@@ -21,7 +16,7 @@ class Swap2(Game.Game):
         temp = self.player1
         self.player1 = self.player2
         self.player2 = temp
-        self.onMove=self.player1
+        self.onMove = self.player1
         del (temp)
 
     def chooseColor(self):
@@ -33,9 +28,9 @@ class Swap2(Game.Game):
         self.b1.hide()
         pygame.display.update()
         pygame.time.delay(200)
+
     def selectColor(self):
         self.chooseColor()
-        pygame.draw.rect(screen, (133, 87, 35), (0, 8, 420, 34))
         while self.change:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -61,7 +56,8 @@ class Swap2(Game.Game):
             if self.onMove.name == "AI":
                 bestMove = self.ai.playBest(self.playedMoves)
                 self.makeMove(bestMove[0], bestMove[1])
-                if self.arbiter.checkBoardState(self.moveNumber, self.onMove.name):
+                if self.arbiter.checkBoardState(self.moveNumber,
+                                                self.onMove.name):
                     self.run = False
                 self.nextTurn()
                 pygame.display.update()
@@ -80,12 +76,14 @@ class Swap2(Game.Game):
                     if self.run:
                         for i in range(0, BOARDSIZE):
                             for j in range(0, BOARDSIZE):
-                                if self.b.square[i][j].graphic.collidepoint(pos) and self.b.square[i][j].value == '_':
+                                if self.b.square[i][j].graphic.collidepoint(
+                                        pos) and self.board[i][j] == '_':
                                     print("Wykonuje ruch:", self.onMove.name)
                                     if self.onMove.name != "AI":
                                         self.makeMove(i, j)
                                         pygame.display.update()
-                                    if self.arbiter.checkBoardState(self.moveNumber, self.onMove.name):
+                                    if self.arbiter.checkBoardState(
+                                            self.moveNumber, self.onMove.name):
                                         self.run = False
                                         break
                                     self.nextTurn()

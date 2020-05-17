@@ -1,9 +1,7 @@
-from Game import Game
+from Game import Game,Player
 import time,sys
 import swap2,standard
 import pygame
-from Player import Player
-from Globals import screen
 while(True):
 
 
