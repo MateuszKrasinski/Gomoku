@@ -14,7 +14,7 @@ class Standard(Game):
         self.on_move = on_move
 
     def playgame(self):
-        gui.draw_board(self.b)
+        gui.draw_board(self.board_gui)
         while True:
             pygame.display.update()
             pygame.time.delay(100)
@@ -33,12 +33,12 @@ class Standard(Game):
                     if self.run:
                         for i in range(0, BOARDSIZE):
                             for j in range(0, BOARDSIZE):
-                                if self.b[i][j].graphic.collidepoint(
+                                if self.board_gui[i][j].graphic.collidepoint(
                                         pos) and self.board[i][j] == '_':
                                     if self.on_move.name != "AI":
                                         self.make_move(i, j)
                                         pygame.display.update()
-                                    if self.arbiter.checkBoardState(self.moveNumber,
+                                    if self.arbiter.checkBoardState(self.move_number,
                                                                     self.on_move.name):
                                         self.run = False
                                         break

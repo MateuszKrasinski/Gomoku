@@ -1,5 +1,6 @@
 import sys
 import pygame
+import gui
 from game import Game
 
 BOARDSIZE = 15
@@ -25,7 +26,6 @@ class Swap2(Game):
         self.b2.black()
         pygame.display.update()
 
-
     def select_color(self):
         self.choose_color()
         while self.change:
@@ -46,7 +46,7 @@ class Swap2(Game):
                         self.change = False
 
     def playgame(self):
-        self.b.draw()
+        gui.draw_board(self.board_gui)
         while True:
             pygame.display.update()
             pygame.time.delay(100)
@@ -58,7 +58,7 @@ class Swap2(Game):
                     self.run = False
                 self.next_turn()
                 pygame.display.update()
-            if self.moveNumber == 3:
+            if self.move_number == 3:
                 self.select_color()
             for event in pygame.event.get():
                 pygame.display.update()
@@ -73,14 +73,14 @@ class Swap2(Game):
                     if self.run:
                         for i in range(0, BOARDSIZE):
                             for j in range(0, BOARDSIZE):
-                                if self.b.square[i][j].graphic.collidepoint(
+                                if self.board_gui[i][j].graphic.collidepoint(
                                         pos) and self.board[i][j] == '_':
                                     print("Wykonuje ruch:", self.on_move.name)
                                     if self.on_move.name != "AI":
                                         self.make_move(i, j)
                                         pygame.display.update()
                                     if self.arbiter.checkBoardState(
-                                            self.moveNumber, self.on_move.name):
+                                            self.move_number, self.on_move.name):
                                         self.run = False
                                         break
                                     self.next_turn()

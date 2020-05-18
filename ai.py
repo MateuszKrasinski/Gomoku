@@ -8,6 +8,8 @@ MAX_DEPTH = 5
 NUMBER_OF_CHECKED_SQUARES = 10
 NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX = 11
 BOARDSIZE = 15  # stala rozmiar planszy
+WHITE="white"
+BLACK="black"
 
 
 class AI():
@@ -35,13 +37,13 @@ class AI():
         if is_maximizing:
             best_score = -math.inf
             for i, j in min_max_set:
-                self.board[i][j] = "black"
+                self.board[i][j] = BLACK
                 score = self.mini_max(self.board, depth, depth, False, alpha, beta)
                 self.board[i][j] = "_"
                 secik.append((i, j, score))
             secik = self.sort_moves_by_evaluation(secik, True)
             for i, j, evaluation in secik[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
-                self.board[i][j] = "black"
+                self.board[i][j] = BLACK
                 self.move_number = self.move_number + 1
                 self.add_neighbours_squares(i, j, depth + 1, self.played_moves)
                 score = self.mini_max(self.board, depth + 1, MAX_DEPTH, False, alpha,
@@ -59,13 +61,13 @@ class AI():
 
         best_score = math.inf
         for i, j in min_max_set:
-            self.board[i][j] = "white"
+            self.board[i][j] = WHITE
             score = self.mini_max(self.board, depth, depth, True, alpha, beta)
             self.board[i][j] = "_"
             secik.append((i, j, score))
         secik = self.sort_moves_by_evaluation(secik, False)
         for i, j, evaluation in secik[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
-            self.board[i][j] = "white"
+            self.board[i][j] = WHITE
             self.move_number += 1
             self.add_neighbours_squares(i, j, depth + 1, self.played_moves)
             score = self.mini_max(self.board, depth + 1, MAX_DEPTH, True, alpha, beta)
@@ -90,7 +92,7 @@ class AI():
             self.optional_moves[0].add((7, 7))
         for i, j in self.optional_moves[0]:
             if self.board[i][j] == "_":
-                self.board[i][j] = "black"
+                self.board[i][j] = BLACK
                 score = self.mini_max(self.board, 0, 0, False, -math.inf,
                                       math.inf)
                 self.board[i][j] = "_"
@@ -102,7 +104,7 @@ class AI():
         print("Not found winning forced move in depth 0")
         for i, j in self.optional_moves[0]:
             if self.board[i][j] == "_":
-                self.board[i][j] = "white"
+                self.board[i][j] = WHITE
                 score = self.mini_max(self.board, 1, 1, True, -math.inf,
                                       math.inf)
                 self.board[i][j] = "_"
@@ -132,7 +134,7 @@ class AI():
         secik = self.good_moves + secik
         for i, j, score in secik:
             if self.board[i][j] == "_" and ( time.time() - start_time < MAX_MOVE_TIME):
-                self.board[i][j] = "black"
+                self.board[i][j] = BLACK
                 self.move_number = self.move_number + 1
                 self.add_neighbours_squares(i, j, 1, self.played_moves)
                 score = self.mini_max(self.board, 1, MAX_DEPTH, False,
