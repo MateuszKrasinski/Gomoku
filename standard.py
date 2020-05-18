@@ -1,50 +1,46 @@
-from Game import Player, Game
-import pygame, sys
+import sys
+import pygame
+import gui
+from game import Game
 
 BOARDSIZE = 15
 
 
 class Standard(Game):
-    def __init__(self, player1, player2, onMove):
+    def __init__(self, player1, player2, on_move):
         super(Standard, self).__init__()
         self.player1 = player1
         self.player2 = player2
-        self.onMove = onMove
+        self.on_move = on_move
 
     def playgame(self):
-        self.b.draw()
+        gui.draw_board(self.b)
         while True:
             pygame.display.update()
-            # pygame.time.delay(100)
-            if self.onMove.name == "AI":
-                bestMove = self.ai.playBest(self.playedMoves)
-                self.makeMove(bestMove[0], bestMove[1])
-                if self.arbiter.checkBoardState(self.moveNumber,
-                                                self.onMove.name):
-                    self.run = False
-                self.nextTurn()
-                pygame.display.update()
+            pygame.time.delay(100)
+            if self.on_move.name == "AI":
+                self.ai_move()
             # handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
-                    if self.buttonSettings.graphic.collidepoint(pos):
+                    if self.buttton_menu.graphic.collidepoint(pos):
                         return "Menu"
-                    if self.buttonNewGame.graphic.collidepoint(pos):
+                    if self.buttton_new_game.graphic.collidepoint(pos):
                         return "Restart"
                     if self.run:
                         for i in range(0, BOARDSIZE):
                             for j in range(0, BOARDSIZE):
-                                if self.b.square[i][j].graphic.collidepoint(
+                                if self.b[i][j].graphic.collidepoint(
                                         pos) and self.board[i][j] == '_':
-                                    if self.onMove.name != "AI":
-                                        self.makeMove(i, j)
+                                    if self.on_move.name != "AI":
+                                        self.make_move(i, j)
                                         pygame.display.update()
-                                    if self.arbiter.checkBoardState(
-                                            self.moveNumber, self.onMove.name):
+                                    if self.arbiter.checkBoardState(self.moveNumber,
+                                                                    self.on_move.name):
                                         self.run = False
                                         break
-                                    self.nextTurn()
+                                    self.next_turn()
                     pygame.display.update()

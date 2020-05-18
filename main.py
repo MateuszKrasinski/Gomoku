@@ -1,31 +1,35 @@
-from Game import Game,Player
-import time,sys
+import time
+import sys
+
 import swap2,standard
 import pygame
+
+import game
 while(True):
 
 
-    game=Game()
-    result = game.Menu()
+    gra=game.Game()
+    print("HEloo")
+    result = gra.menu()
     if result:
         if result[3]=="standard":
-            game=standard.Standard(result[0],result[1],result[2])
-            game = True
-            while game:
-                game = standard.Standard(result[0], result[1], result[2])
-                game = game.playgame()
-                if game == "Restart":
+            gra=standard.Standard(result[0],result[1],result[2])
+            gra = True
+            while gra:
+                gra = standard.Standard(result[0], result[1], result[2])
+                gra = gra.playgame()
+                if gra == "Restart":
                     pass
-                if game == "Menu":
+                if gra == "Menu":
                     break
         elif result[3]=="swap2":
-            game=True
-            while game:
-                game=swap2.Swap2(result[0],result[1],result[2])
-                game=game.playgame()
-                if game=="Restart":
+            gra=True
+            while gra:
+                gra=swap2.Swap2(result[0],result[1],result[2])
+                gra=game.playgame()
+                if gra=="Restart":
                     pass
-                if game=="Menu":
+                if gra=="Menu":
                     break
 
 

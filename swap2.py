@@ -1,48 +1,45 @@
-from Game import Player, Game
-import pygame, sys
+import sys
+import pygame
+from game import Game
 
 BOARDSIZE = 15
 
 
 class Swap2(Game):
-    def __init__(self, player1, player2, onMove):
+    def __init__(self, player1, player2, on_move):
         super(Swap2, self).__init__()
         self.player1 = player1
         self.player2 = player2
-        self.onMove = onMove
+        self.on_move = on_move
         self.change = True
 
-    def changePlayer(self):
+    def change_player(self):
         temp = self.player1
         self.player1 = self.player2
         self.player2 = temp
-        self.onMove = self.player1
-        del (temp)
+        self.on_move = self.player1
+        del temp
 
-    def chooseColor(self):
+    def choose_color(self):
         self.b1.white()
         self.b2.black()
         pygame.display.update()
 
-    def hideColor(self):
-        self.b1.hide()
-        pygame.display.update()
-        pygame.time.delay(200)
 
-    def selectColor(self):
-        self.chooseColor()
+    def select_color(self):
+        self.choose_color()
         while self.change:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
-                if self.onMove.name == "AI":
+                if self.on_move.name == "AI":
                     self.change = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
                     if self.b1.rect.collidepoint(pos):
                         print("Clicked b1")
-                        self.onMoveGUI.black("Gracz1")
-                        self.changePlayer()
+                        self.on_move_gui.black("Gracz1")
+                        self.change_player()
                         self.change = False
                     if self.b2.rect.collidepoint(pos):
                         print("Clicked b2")
@@ -53,38 +50,38 @@ class Swap2(Game):
         while True:
             pygame.display.update()
             pygame.time.delay(100)
-            if self.onMove.name == "AI":
-                bestMove = self.ai.playBest(self.playedMoves)
-                self.makeMove(bestMove[0], bestMove[1])
+            if self.on_move.name == "AI":
+                best_move = self.ai.play_best(self.played_moves)
+                self.make_move(best_move[0], best_move[1])
                 if self.arbiter.checkBoardState(self.moveNumber,
-                                                self.onMove.name):
+                                                self.on_move.name):
                     self.run = False
-                self.nextTurn()
+                self.next_turn()
                 pygame.display.update()
             if self.moveNumber == 3:
-                self.selectColor()
+                self.select_color()
             for event in pygame.event.get():
                 pygame.display.update()
                 if event.type == pygame.QUIT:
                     sys.exit(0)
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
-                    if self.buttonSettings.graphic.collidepoint(pos):
+                    if self.buttton_menu.graphic.collidepoint(pos):
                         return "Menu"
-                    if self.buttonNewGame.graphic.collidepoint(pos):
+                    if self.buttton_new_game.graphic.collidepoint(pos):
                         return "Restart"
                     if self.run:
                         for i in range(0, BOARDSIZE):
                             for j in range(0, BOARDSIZE):
                                 if self.b.square[i][j].graphic.collidepoint(
                                         pos) and self.board[i][j] == '_':
-                                    print("Wykonuje ruch:", self.onMove.name)
-                                    if self.onMove.name != "AI":
-                                        self.makeMove(i, j)
+                                    print("Wykonuje ruch:", self.on_move.name)
+                                    if self.on_move.name != "AI":
+                                        self.make_move(i, j)
                                         pygame.display.update()
                                     if self.arbiter.checkBoardState(
-                                            self.moveNumber, self.onMove.name):
+                                            self.moveNumber, self.on_move.name):
                                         self.run = False
                                         break
-                                    self.nextTurn()
+                                    self.next_turn()
                     pygame.display.update()
