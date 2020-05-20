@@ -118,7 +118,7 @@ class AI():
         print("Not found defensive forced move in depth 0 in time:")
         return False
 
-    def play_best(self, played_moves):
+    def play_best(self, played_moves,black_color=True):
         self.played_moves = played_moves
         print("played_moves moves:", len(self.played_moves))
         best_score = -math.inf
@@ -129,7 +129,7 @@ class AI():
         self.mini_max(self.board, 0, 0, True, -math.inf, math.inf)
         start_time = time.time()
         self.good_moves = self.arbiter.good_moves
-        secik = self.sort_moves_by_evaluation(self.important_moves[0], True)
+        secik = self.sort_moves_by_evaluation(self.important_moves[0], black_color)
         print("{}Important moves{}".format(len(secik), secik))
         print("         Good moves:", self.good_moves)
         for i,j,z in self.good_moves:

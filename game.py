@@ -120,7 +120,10 @@ class Game:
                     print("Mode:", self.mode)
 
     def ai_move(self):
-        best_move = self.ai.play_best(self.played_moves)
+        if self.on_move.get_stone_color()=="black":
+            best_move = self.ai.play_best(self.played_moves)
+        else:
+            best_move = self.ai.play_best(self.played_moves,black_color=False)
         print(best_move[0], " x ", best_move[1])
         self.make_move(best_move[0], best_move[1])
         if self.arbiter.checkBoardState(self.move_number, self.on_move.name):
