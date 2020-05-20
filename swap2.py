@@ -13,17 +13,20 @@ class Swap2(Game):
         self.player2 = player2
         self.on_move = on_move
         self.change = True
-
+        if self.on_move.get_stone_color()=="white":
+            self.on_move_gui.white(self.on_move.name)
+        else:
+            self.on_move_gui.black(self.on_move.name)
     def change_player(self):
         temp = self.player1
         self.player1 = self.player2
         self.player2 = temp
-        self.on_move = self.player1
+
         del temp
 
     def choose_color(self):
-        self.b1.white()
-        self.b2.black()
+        self.white_stone_button.white()
+        self.black_stone_button.black()
         pygame.display.update()
 
     def select_color(self):
@@ -36,14 +39,16 @@ class Swap2(Game):
                     self.change = False
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
-                    if self.b1.rect.collidepoint(pos):
+                    if self.white_stone_button.graphic.collidepoint(pos):
                         print("Clicked b1")
-                        self.on_move_gui.black("Gracz1")
+                        self.on_move_gui.black(self.player1.name)
                         self.change_player()
                         self.change = False
-                    if self.b2.rect.collidepoint(pos):
+
+                    if self.black_stone_button.graphic.collidepoint(pos):
                         print("Clicked b2")
                         self.change = False
+
 
     def playgame(self):
         gui.draw_board(self.board_gui)
@@ -53,8 +58,7 @@ class Swap2(Game):
             if self.on_move.name == "AI":
                 best_move = self.ai.play_best(self.played_moves)
                 self.make_move(best_move[0], best_move[1])
-                if self.arbiter.checkBoardState(self.moveNumber,
-                                                self.on_move.name):
+                if self.arbiter.checkBoardState(self.move_number, self.on_move.name):
                     self.run = False
                 self.next_turn()
                 pygame.display.update()

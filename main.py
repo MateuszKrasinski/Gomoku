@@ -18,7 +18,7 @@ while (True):
                 gra = standard.Standard(result[0], result[1], result[2])
                 gra = gra.playgame()
                 if gra == "Restart":
-                    pass
+                    continue
                 if gra == "Menu":
                     break
         elif result[3] == "swap2":

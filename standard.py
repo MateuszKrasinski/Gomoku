@@ -12,6 +12,16 @@ class Standard(Game):
         self.player1 = player1
         self.player2 = player2
         self.on_move = on_move
+        if self.on_move.get_stone_color()=="white":
+            self.on_move_gui.white(self.on_move.name)
+        else:
+            self.on_move_gui.black(self.on_move.name)
+        print()
+        print("Gracz1:", self.player1.name)
+        print("Gracz2:", self.player2.name)
+        print("Na ruchu:", self.on_move.name)
+        print()
+
 
     def playgame(self):
         gui.draw_board(self.board_gui)
@@ -19,6 +29,7 @@ class Standard(Game):
             pygame.display.update()
             pygame.time.delay(100)
             if self.on_move.name == "AI":
+                print("Tu ma nie wchodzic")
                 self.ai_move()
             # handle events
             for event in pygame.event.get():

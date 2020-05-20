@@ -1,18 +1,19 @@
 import pygame
 
 # colors
-SETTINGS_TOP_MARGIN=10
+SETTINGS_TOP_MARGIN = 10
 BUTTON_COLOR = (88, 61, 0)
 BOARD_COLOR = (133, 87, 35)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+SELECTED_COLOR=(218,165,32)
 
 BIG_FONT_SIZE = 40
 FONT_SIZE = 14
 BORDER = 2
 BOARD_SIZE = 15
 SQUARE_WIDTH = 30
-CIRCLE_RADIUS=SQUARE_WIDTH//2
+CIRCLE_RADIUS = SQUARE_WIDTH // 2
 SQUARE_MARGIN = 2
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 545
@@ -23,7 +24,8 @@ BOARD_WIDTH = int(BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN) + 2 * SQUARE_MARGI
 LEFT_MARGIN = int(SCREEN_WIDTH - (BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN))) // 4
 TOP_MARGIN = int(SCREEN_HEIGHT - BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN)) // 2
 RIGHT_MARGIN = int(SCREEN_WIDTH - BOARD_WIDTH - LEFT_MARGIN)
-SETTINGS_MESSAGE_TOP_MARGIN=TOP_MARGIN-5
+SETTINGS_MESSAGE_TOP_MARGIN = TOP_MARGIN - 5
+
 
 def message(what, x, y, font_size):
     font = pygame.font.SysFont("Arial", font_size, 1)
@@ -41,7 +43,7 @@ def messageWin(name):
 
 
 def messageDraw():
-    message("Remis", int(SCREEN_WIDTH / 2), int(SCREEN_HEIGHT / 1 / 5))
+    message("Remis", int(SCREEN_WIDTH / 2), int(SCREEN_HEIGHT / 1 / 5),BIG_FONT_SIZE)
     pygame.display.update()
 
 
@@ -111,8 +113,8 @@ class OnMove():
         message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 5,
                 self.graphic1.center[1], FONT_SIZE)
         self.graphic = pygame.draw.circle(SCREEN, BLACK, (
-            self.graphic1.midright[0] - SQUARE_WIDTH / 2 - 2,
-            self.graphic1.midright[1] - 2), SQUARE_WIDTH / 2.5)
+            int(self.graphic1.midright[0]) - SQUARE_WIDTH // 2 - 2,
+            int(self.graphic1.midright[1]) - 2), SQUARE_WIDTH // 2.5)
         pygame.display.update()
 
     def white(self, name):
@@ -120,8 +122,16 @@ class OnMove():
         message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 5,
                 self.graphic1.center[1], FONT_SIZE)
         self.graphic = pygame.draw.circle(SCREEN, WHITE, (
-            self.graphic1.midright[0] - SQUARE_WIDTH / 2 - 2,
-            self.graphic1.midright[1] - 2), SQUARE_WIDTH / 2.5)
+            int(self.graphic1.midright[0]) - SQUARE_WIDTH // 2 - 2,
+            int(self.graphic1.midright[1] - 2)), SQUARE_WIDTH // 2.5)
+        pygame.display.update()
+
+    def change_message(self, name):
+        pygame.draw.rect(SCREEN, BOARD_COLOR, (SCREEN_WIDTH - RIGHT_MARGIN,
+                                               SCREEN_HEIGHT // 3.5, int(SQUARE_WIDTH * 1.7),
+                                               SQUARE_WIDTH // 2))
+        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 5,
+                self.graphic1.center[1], FONT_SIZE)
         pygame.display.update()
 
 
@@ -147,7 +157,7 @@ class ChooseColor:
     def __init__(self, next):
         self.button_width = SQUARE_WIDTH
         self.button_height = SQUARE_WIDTH
-        self.left_down_corner_x = SCREEN_WIDTH / 4.5 + next * 30 - 20
+        self.left_down_corner_x = SCREEN_WIDTH / 4.5 + next * (SQUARE_WIDTH+2*BORDER) - 20
         self.left_down_corner_y = SETTINGS_TOP_MARGIN
         self.next = next
         self.border = pygame.Rect(
@@ -157,23 +167,29 @@ class ChooseColor:
         self.graphic = pygame.Rect(
             self.left_down_corner_x, self.left_down_corner_y, self.button_width, self.button_height)
 
-    def black(self):
-        pygame.draw.rect(SCREEN, BLACK, self.border)
+    def black(self,clicked=False):
+        if clicked:
+            pygame.draw.rect(SCREEN, SELECTED_COLOR, self.border)
+        else:
+            pygame.draw.rect(SCREEN, BLACK, self.border)
         pygame.draw.rect(SCREEN, BUTTON_COLOR, self.graphic)
-        pygame.draw.circle(SCREEN, BLACK, self.graphic.center, CIRCLE_RADIUS-BORDER)
+        pygame.draw.circle(SCREEN, BLACK, self.graphic.center, CIRCLE_RADIUS - BORDER)
 
-    def white(self):
+    def white(self,clicked=False):
         message("Choose color:", LEFT_MARGIN + 25, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
-        pygame.draw.rect(SCREEN, BLACK, self.border)
+        if clicked:
+            pygame.draw.rect(SCREEN, SELECTED_COLOR, self.border)
+        else:
+            pygame.draw.rect(SCREEN, BLACK, self.border)
         pygame.draw.rect(SCREEN, BUTTON_COLOR, self.graphic)
-        pygame.draw.circle(SCREEN, WHITE, self.graphic.center, CIRCLE_RADIUS-BORDER)
+        pygame.draw.circle(SCREEN, WHITE, self.graphic.center, CIRCLE_RADIUS - BORDER)
 
 
 class ChooseOpponent():
     def __init__(self, next=0):
-        self.left_down_corner_x = SCREEN_WIDTH // 2 + next * 50 - 25
+        self.left_down_corner_x = SCREEN_WIDTH // 2 + next * 64 - 30
         self.left_down_corner_y = SETTINGS_TOP_MARGIN
-        self.button_width = SQUARE_WIDTH*2
+        self.button_width = SQUARE_WIDTH * 2
         self.button_height = SQUARE_WIDTH
         self.next = next
         self.border = pygame.Rect(
@@ -183,20 +199,27 @@ class ChooseOpponent():
         self.graphic = pygame.Rect(
             self.left_down_corner_x, self.left_down_corner_y, self.button_width, self.button_height)
 
-    def AI(self):
-        pygame.draw.rect(SCREEN, BLACK, self.border)
+    def AI(self,clicked=False):
+        if clicked:
+            pygame.draw.rect(SCREEN, SELECTED_COLOR, self.border)
+        else:
+            pygame.draw.rect(SCREEN, BLACK, self.border)
         pygame.draw.rect(SCREEN, BUTTON_COLOR, self.graphic)
         message("AI", self.graphic.center[0] - 5, self.graphic.center[1], FONT_SIZE)
-        message("Opponent:", self.left_down_corner_x - 50, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
-    def player(self):
-        pygame.draw.rect(SCREEN, BLACK, self.border)
+        message("Opponent:", self.left_down_corner_x - 45, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
+
+    def player(self,clicked=False):
+        if clicked:
+            pygame.draw.rect(SCREEN, SELECTED_COLOR, self.border)
+        else:
+            pygame.draw.rect(SCREEN, BLACK, self.border)
         pygame.draw.rect(SCREEN, BUTTON_COLOR, self.graphic)
         message("PLAYER", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
 
 
 class ChooseMode():
     def __init__(self, number):
-        self.left_down_corner_x = BOARD_WIDTH - 30 + number * 70
+        self.left_down_corner_x = BOARD_WIDTH - 30 + number * 74
         self.left_down_corner_y = SETTINGS_TOP_MARGIN
         self.button_width = 70
         self.button_height = 30
@@ -208,14 +231,20 @@ class ChooseMode():
         self.graphic = pygame.Rect(
             self.left_down_corner_x, self.left_down_corner_y, self.button_width, self.button_height)
 
-    def stanard(self):
-        self.border = pygame.draw.rect(SCREEN, BLACK, self.border)
+    def stanard(self,clicked=False):
+        if clicked:
+            pygame.draw.rect(SCREEN, SELECTED_COLOR, self.border)
+        else:
+            pygame.draw.rect(SCREEN, BLACK, self.border)
         self.graphic = pygame.draw.rect(SCREEN, BUTTON_COLOR, self.graphic)
-        message("Rules:", BOARD_WIDTH - 60, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
+        message("Rules:", BOARD_WIDTH - 56, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
         message("standard", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
 
-    def swap2(self):
-        self.border = pygame.draw.rect(SCREEN, BLACK, self.border)
+    def swap2(self,clicked=False):
+        if clicked:
+            pygame.draw.rect(SCREEN, SELECTED_COLOR, self.border)
+        else:
+            pygame.draw.rect(SCREEN, BLACK, self.border)
         self.graphic = pygame.draw.rect(SCREEN, BUTTON_COLOR, self.graphic)
         message("swap2", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
 

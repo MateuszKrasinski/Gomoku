@@ -5,9 +5,10 @@ from check_board_state import CheckBoardState
 from ai import AI
 
 BOARDSIZE = 15
-EMPTY="_"
-WHITE="white"
-BLACK="black"
+EMPTY = "_"
+WHITE = "white"
+BLACK = "black"
+
 
 class Player():
     def __init__(self, name_="Gracz", stone_=WHITE):
@@ -44,9 +45,9 @@ class Game:
         self.played_moves = set()
         self.player1 = Player("Gracz1", WHITE)
         self.player2 = Player("AI", BLACK)
+        self.mode = "standard"
         self.on_move = self.player1
         self.on_move_gui = gui.OnMove()
-        self.on_move_gui.white(self.on_move.name)
 
         self.white_stone_button = gui.ChooseColor(0)
         self.black_stone_button = gui.ChooseColor(1)
@@ -54,14 +55,15 @@ class Game:
         self.player_opponent_button = gui.ChooseOpponent(1)
         self.standard_mode_button = gui.ChooseMode(0)
         self.swap2_mode_button = gui.ChooseMode(1)
-        self.mode = "standard"
+
 
     def menu(self):
-        self.white_stone_button.white()
+        self.on_move_gui.white(self.on_move.name)
+        self.white_stone_button.white(True)
         self.black_stone_button.black()
-        self.ai_opponent_button.AI()
+        self.ai_opponent_button.AI(True)
         self.player_opponent_button.player()
-        self.standard_mode_button.stanard()
+        self.standard_mode_button.stanard(True)
         self.swap2_mode_button.swap2()
         pygame.display.update()
         run = True
@@ -69,7 +71,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
-                if event.type == pygame.MOUSEBUTTONUP:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     if self.buttton_new_game.graphic.collidepoint(pos):
                         run = False
@@ -77,29 +79,49 @@ class Game:
                     if self.white_stone_button.graphic.collidepoint(pos):
                         print("Clicked white")
                         self.on_move = self.player1
+                        self.on_move_gui.white(self.player1.name)
+                        self.white_stone_button.white(True)
+                        self.black_stone_button.black()
                     if self.black_stone_button.graphic.collidepoint(pos):
                         print("Clicked black")
+                        self.on_move_gui.black(self.player2.name)
+                        self.white_stone_button.white(False)
+                        self.black_stone_button.black(True)
                         self.on_move = self.player2
                     if self.ai_opponent_button.graphic.collidepoint(pos):
                         print("Clicked ai_opponent_button")
-                        self.player2.set_name("AI")
+                        self.player2.name="AI"
+                        if self.on_move == self.player2:
+                            self.on_move_gui.black(self.player2.name)
+                        self.ai_opponent_button.AI(True)
+                        self.player_opponent_button.player(False)
                     if self.player_opponent_button.graphic.collidepoint(pos):
                         self.player2.set_name("Gracz2")
+                        if self.on_move==self.player2:
+                            self.on_move_gui.black(self.player2.name)
+                        self.ai_opponent_button.AI(False)
+                        self.player_opponent_button.player(True)
                         print("Clicked player_opponent_button")
                     if self.standard_mode_button.graphic.collidepoint(pos):
                         self.mode = "standard"
+                        self.standard_mode_button.stanard(True)
+                        self.swap2_mode_button.swap2()
                         print("Clicked standard_mode_button")
                     if self.swap2_mode_button.graphic.collidepoint(pos):
                         self.mode = "swap2"
+                        self.standard_mode_button.stanard()
+                        self.swap2_mode_button.swap2(True)
                         print("Clicked swap2_mode_button")
+                    pygame.display.update()
 
                     print("Player 1:", self.player1.name)
                     print("Player 2:", self.player2.name)
                     print("On move:", self.on_move.name)
-                    print("MOde:", self.mode)
+                    print("Mode:", self.mode)
+
     def ai_move(self):
         best_move = self.ai.play_best(self.played_moves)
-        print(best_move[0]," x ",best_move[1])
+        print(best_move[0], " x ", best_move[1])
         self.make_move(best_move[0], best_move[1])
         if self.arbiter.checkBoardState(self.move_number, self.on_move.name):
             self.run = False
@@ -109,10 +131,16 @@ class Game:
     def next_turn(self):
         if self.on_move == self.player1:
             self.on_move = self.player2
-            self.on_move_gui.black(self.on_move.name)
+            if self.on_move.get_stone_color()==WHITE:
+                self.on_move_gui.white(self.on_move.name)
+            else:
+                self.on_move_gui.black(self.on_move.name)
         elif self.on_move == self.player2:
             self.on_move = self.player1
-            self.on_move_gui.white(self.on_move.name)
+            if self.on_move.get_stone_color() == WHITE:
+                self.on_move_gui.white(self.on_move.name)
+            else:
+                self.on_move_gui.black(self.on_move.name)
 
     def make_move(self, i, j):
         print("Ruch numer:", self.move_number)
