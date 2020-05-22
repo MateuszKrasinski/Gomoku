@@ -9,7 +9,7 @@ GOOD_MOVE = 3000
 
 class CheckBoardState:
     def __init__(self, board):
-        self.board = board
+        self.game_board = board
         self.good_moves = []
         self.four_stones = 0
         self.three_stones = 0
@@ -23,28 +23,31 @@ class CheckBoardState:
         for i in range(0, BOARDSIZE):
             consecutive = 1
             for j in range(0, BOARDSIZE - 1):
-                if self.board[i][j] == self.board[i][j + 1] != EMPTY:
+                if self.game_board[i][j] == self.game_board[i][j + 1] != EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
                         return True
                     if consecutive == 4:
-                        if self.board[i][j + 1] == EMPTY and self.board[i][j - 4] == EMPTY:
-                            if self.board[i][j] == WHITE:
+                        if self.game_board[i][j + 1] == EMPTY and self.game_board[i][
+                            j - 4] == EMPTY:
+                            if self.game_board[i][j] == WHITE:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
                     elif consecutive == 3:
-                        if self.board[i][j + 1] == EMPTY and self.board[i][j - 3] == EMPTY:
-                            if self.board[i][j] == WHITE:
+                        if self.game_board[i][j + 1] == EMPTY and self.game_board[i][
+                            j - 3] == EMPTY:
+                            if self.game_board[i][j] == WHITE:
                                 self.three_stones += 1
                             else:
                                 self.three_stones -= 1
                             self.good_moves.append((i, j + 1, GOOD_MOVE))
                             self.good_moves.append((i, j - 3, GOOD_MOVE))
                     elif consecutive == 2:
-                        if self.board[i][j + 1] == EMPTY and self.board[i][j - 2] == EMPTY:
-                            if self.board[i][j] == WHITE:
+                        if self.game_board[i][j + 1] == EMPTY and self.game_board[i][
+                            j - 2] == EMPTY:
+                            if self.game_board[i][j] == WHITE:
                                 self.two_stones += 1
                             else:
                                 self.two_stones -= 1
@@ -55,27 +58,29 @@ class CheckBoardState:
         for j in range(0, BOARDSIZE):
             consecutive = 1
             for i in range(0, BOARDSIZE - 1):
-                if self.board[i][j] == self.board[i + 1][j] != EMPTY:
+                if self.game_board[i][j] == self.game_board[i + 1][j] != EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
                         return True
                     if consecutive == 2:
-                        if self.board[i][j] == WHITE:
+                        if self.game_board[i][j] == WHITE:
                             self.two_stones += 1
                         else:
                             self.two_stones -= 1
                     elif consecutive == 3:
-                        if self.board[i + 1][j] == EMPTY and self.board[i - 3][j] == EMPTY:
-                            if self.board[i][j] == WHITE:
+                        if self.game_board[i + 1][j] == EMPTY and self.game_board[i - 3][
+                            j] == EMPTY:
+                            if self.game_board[i][j] == WHITE:
                                 self.three_stones += 1
                             else:
                                 self.three_stones -= 1
                             self.good_moves.append((i + 1, j, GOOD_MOVE))
                             self.good_moves.append((i + -3, j, GOOD_MOVE))
                     elif consecutive == 4:
-                        if self.board[i + 1][j] == EMPTY and self.board[i - 4][j] == EMPTY:
-                            if self.board[i][j] == WHITE:
+                        if self.game_board[i + 1][j] == EMPTY and self.game_board[i - 4][
+                            j] == EMPTY:
+                            if self.game_board[i][j] == WHITE:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
@@ -84,34 +89,34 @@ class CheckBoardState:
 
     def check_diagonal(self):
         # 1 left-up corner to main diagonal(\)
-        for i in range(0, BOARDSIZE):
+        for i in range(1, BOARDSIZE):
             consecutive = 1
             for j in range(0, BOARDSIZE - i - 1):
-                if self.board[j + i][j] == self.board[j + i + 1][j + 1] != EMPTY:
+                if self.game_board[j + i][j] == self.game_board[j + i + 1][j + 1] != EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
                         return True
                     if consecutive == 2:
-                        if self.board[j + i + 1][j + 1] == EMPTY and \
-                                self.board[j + i - 2][j - 2] == EMPTY:
-                            if self.board[j + i][j] == WHITE:
+                        if self.game_board[j + i + 1][j + 1] == EMPTY and \
+                                self.game_board[j + i - 2][j - 2] == EMPTY:
+                            if self.game_board[j + i][j] == WHITE:
                                 self.two_stones += 1
                             else:
                                 self.two_stones -= 1
                     elif consecutive == 3:
-                        if self.board[j + i + 1][j + 1] == EMPTY and \
-                                self.board[j + i - 3][j - 3] == EMPTY:
-                            if self.board[j + i][j] == WHITE:
+                        if self.game_board[j + i + 1][j + 1] == EMPTY and \
+                                self.game_board[j + i - 3][j - 3] == EMPTY:
+                            if self.game_board[j + i][j] == WHITE:
                                 self.three_stones += 1
                             else:
                                 self.three_stones -= 1
                             self.good_moves.append((j + i + 1, j + 1, GOOD_MOVE))
                             self.good_moves.append((j + i - 3, j - 3, GOOD_MOVE))
                     elif consecutive == 4:
-                        if self.board[j + i][j] == WHITE:
-                            if self.board[j + i + 1][j + 1] == EMPTY or \
-                                    self.board[j + i - 4][j - 4] == EMPTY:
+                        if self.game_board[j + i][j] == WHITE:
+                            if self.game_board[j + i + 1][j + 1] == EMPTY and \
+                                    self.game_board[j + i - 4][j - 4] == EMPTY:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
@@ -120,35 +125,31 @@ class CheckBoardState:
         for i in range(0, BOARDSIZE):
             consecutive = 1
             for j in range(0, BOARDSIZE - i - 1):
-                if self.board[j][j + i] == self.board[j + 1][j + i + 1] != EMPTY:
+                if self.game_board[j][j + i] == self.game_board[j + 1][j + i + 1] != EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
                         return True
                     if consecutive == 2:
-                        if j - 2<0:
-                            print("          Mamy problem")
-                        if j + i - 2<0:
-                            print("          Mamy problem")
-                        if self.board[j + 1][j + i + 1] == EMPTY and \
-                                self.board[j - 2][j + i - 2] == EMPTY:
-                            if self.board[j][j + i] == WHITE:
+                        if self.game_board[j + 1][j + i + 1] == EMPTY and \
+                                self.game_board[j - 2][j + i - 2] == EMPTY:
+                            if self.game_board[j][j + i] == WHITE:
                                 self.two_stones += 1
                             else:
                                 self.two_stones -= 1
                     elif consecutive == 3:
-                        if self.board[j + 1][j + i + 1] == EMPTY and \
-                                self.board[j - 3][j + i - 3] == EMPTY:
-                            if self.board[j][j + i] == WHITE:
+                        if self.game_board[j + 1][j + i + 1] == EMPTY and \
+                                self.game_board[j - 3][j + i - 3] == EMPTY:
+                            if self.game_board[j][j + i] == WHITE:
                                 self.three_stones += 1
                             else:
                                 self.three_stones -= 1
                             self.good_moves.append((j + 1, j + i + 1, GOOD_MOVE))
                             self.good_moves.append((j + -3, j + i - 3, GOOD_MOVE))
                     elif consecutive == 4:
-                        if self.board[j + 1][j + i + 1] == EMPTY and \
-                                self.board[j - 4][j + i - 4] == EMPTY:
-                            if self.board[j][j + i] == WHITE:
+                        if self.game_board[j + 1][j + i + 1] == EMPTY and \
+                                self.game_board[j - 4][j + i - 4] == EMPTY:
+                            if self.game_board[j][j + i] == WHITE:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
@@ -157,31 +158,31 @@ class CheckBoardState:
         for i in range(0, BOARDSIZE):
             consecutive = 1
             for j in range(0, i):
-                if self.board[i - j][j] == self.board[i - j - 1][j + 1] != EMPTY:
+                if self.game_board[i - j][j] == self.game_board[i - j - 1][j + 1] != EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
                         return True
                     if consecutive == 2 and i - j + 2 <= BOARDSIZE - 1:
-                        if self.board[i - j + 2][j - 2] == EMPTY and \
-                                self.board[i - j - 1][j + 1] == EMPTY:
-                            if self.board[i - j][j] == WHITE:
+                        if self.game_board[i - j + 2][j - 2] == EMPTY and \
+                                self.game_board[i - j - 1][j + 1] == EMPTY:
+                            if self.game_board[i - j][j] == WHITE:
                                 self.two_stones += 1
                             else:
                                 self.two_stones -= 1
                     elif consecutive == 3 and i - j + 3 <= BOARDSIZE - 1:
-                        if self.board[i - j + 3][j - 3] == EMPTY and \
-                                self.board[i - j - 1][j + 1] == EMPTY:
-                            if self.board[i - j][j] == WHITE:
+                        if self.game_board[i - j + 3][j - 3] == EMPTY and \
+                                self.game_board[i - j - 1][j + 1] == EMPTY:
+                            if self.game_board[i - j][j] == WHITE:
                                 self.three_stones += 1
                             else:
                                 self.three_stones -= 1
                             self.good_moves.append((i - j + 3, j - 3, GOOD_MOVE))
                             self.good_moves.append((i - j - 1, j + 1, GOOD_MOVE))
                     elif consecutive == 4 and i - j + 4 <= BOARDSIZE - 1:
-                        if self.board[i - j + 4][j - 4] == EMPTY and \
-                                self.board[i - j - 1][j + 1] == EMPTY:
-                            if self.board[i - j][j] == WHITE:
+                        if self.game_board[i - j + 4][j - 4] == EMPTY and \
+                                self.game_board[i - j - 1][j + 1] == EMPTY:
+                            if self.game_board[i - j][j] == WHITE:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
@@ -191,23 +192,23 @@ class CheckBoardState:
         for i in range(0, BOARDSIZE):
             consecutive = 1
             for j in range(0, BOARDSIZE - i - 1):
-                if self.board[i + j + 1][BOARDSIZE - 1 - j - 1] == \
-                        self.board[i + j][BOARDSIZE - 1 - j] != EMPTY:
+                if self.game_board[i + j + 1][BOARDSIZE - 1 - j - 1] == \
+                        self.game_board[i + j][BOARDSIZE - 1 - j] != EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
                         return True
                     if consecutive == 2 and BOARDSIZE - 1 - j + 2 <= 14:
-                        if self.board[i + j + 1][BOARDSIZE - 1 - j - 1] == EMPTY \
-                                and self.board[i + j - 2][BOARDSIZE - 1 - j + 2] == EMPTY:
-                            if self.board[i + j][BOARDSIZE - 1 - j] == WHITE:
+                        if self.game_board[i + j + 1][BOARDSIZE - 1 - j - 1] == EMPTY \
+                                and self.game_board[i + j - 2][BOARDSIZE - 1 - j + 2] == EMPTY:
+                            if self.game_board[i + j][BOARDSIZE - 1 - j] == WHITE:
                                 self.two_stones += 1
                             else:
                                 self.two_stones -= 1
                     elif consecutive == 3 and BOARDSIZE - 1 - j + 3 <= 14:
-                        if self.board[i + j + 1][BOARDSIZE - 1 - j - 1] == EMPTY \
-                                and self.board[i + j - 3][BOARDSIZE - 1 - j + 3] == EMPTY:
-                            if self.board[i + j][BOARDSIZE - 1 - j] == WHITE:
+                        if self.game_board[i + j + 1][BOARDSIZE - 1 - j - 1] == EMPTY \
+                                and self.game_board[i + j - 3][BOARDSIZE - 1 - j + 3] == EMPTY:
+                            if self.game_board[i + j][BOARDSIZE - 1 - j] == WHITE:
                                 self.three_stones += 1
                             else:
                                 self.three_stones -= 1
@@ -216,9 +217,9 @@ class CheckBoardState:
                             self.good_moves.append(
                                 (i + j - 3, BOARDSIZE - j + 2, GOOD_MOVE))
                     elif consecutive == 4 and BOARDSIZE - 1 - j + 3 <= 14:
-                        if self.board[i + j][BOARDSIZE - 1 - j] == EMPTY \
-                                and self.board[i + j - 4][BOARDSIZE - 1 - j + 4] == EMPTY:
-                            if self.board[i + j][BOARDSIZE - 1 - j] == WHITE:
+                        if self.game_board[i + j][BOARDSIZE - 1 - j] == EMPTY \
+                                and self.game_board[i + j - 4][BOARDSIZE - 1 - j + 4] == EMPTY:
+                            if self.game_board[i + j][BOARDSIZE - 1 - j] == WHITE:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
@@ -234,16 +235,16 @@ class CheckBoardState:
     def check_draw(self, move_number=0):
         for i in range(15):
             for j in range(15):
-                if self.board[i][j]==EMPTY:
+                if self.game_board[i][j] == EMPTY:
                     return False
         return True
 
-    def checkBoardState(self, move_number, name):
+    def check_board_state(self, name):
         if self.check_win():
-            gui.messageWin(name)
+            gui.message_win(name)
             return True
-        if self.check_draw(move_number):
-            gui.messageDraw()
+        if self.check_draw():
+            gui.message_draw()
             return True
         return False
 

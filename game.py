@@ -1,5 +1,8 @@
+"""Module contains class Player and Game which allows to create base of the game"""
 import sys
+from dataclasses import dataclass
 import pygame
+
 import gui
 from check_board_state import CheckBoardState
 from ai import AI
@@ -8,154 +11,142 @@ BOARDSIZE = 15
 EMPTY = "_"
 WHITE = "white"
 BLACK = "black"
+PLAYER1_NAME = "Gracz1"
+PLAYER2_NAME = "Gracz2"
 
 
-class Player():
-    def __init__(self, name_="Gracz", stone_=WHITE):
-        self.name = name_
-        self.stone_color = stone_
-
-    def get_stone_color(self):
-        return str(self.stone_color)
-
-    def stone_white(self):
-        self.stone_color = WHITE
-
-    def stone_black(self):
-        self.stone_color = BLACK
-
-    def get_name(self):
-        return self.name
-
-    def set_name(self, name):
-        self.name = name
+@dataclass
+class Player:
+    """Class creating player object with attributes name, stone_color"""
+    name: str
+    stone_color: str
 
 
 class Game:
+    """Class set up all need operations and attributes to play game."""
+
     def __init__(self):
-        self.run = True
-        self.move_number = 0
-        gui.Background()
-        self.board = [[EMPTY for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
-        self.board_gui = [[gui.Square() for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
-        self.buttton_new_game = gui.Button(0, "New Game")
-        self.buttton_menu = gui.Button(1, "Menu")
-        self.arbiter = CheckBoardState(self.board)
-        self.ai = AI(self.board, self.move_number)
+        """Init Game with all needed attributes. """
+
+        gui.draw_background()
+        self.game_running = True
+        self.game_move_number = 0
+        self.game_board = [[EMPTY for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
+        self.game_arbiter = CheckBoardState(self.game_board)
+        self.ai = AI(self.game_board)
         self.played_moves = set()
-        self.player1 = Player("Gracz1", WHITE)
+        self.player1 = Player(PLAYER1_NAME, WHITE)
         self.player2 = Player("AI", BLACK)
-        self.mode = "standard"
-        self.on_move = self.player1
-        self.on_move_gui = gui.OnMove()
-
-        self.white_stone_button = gui.ChooseColor(0)
-        self.black_stone_button = gui.ChooseColor(1)
-        self.ai_opponent_button = gui.ChooseOpponent(0)
-        self.player_opponent_button = gui.ChooseOpponent(1)
-        self.standard_mode_button = gui.ChooseMode(0)
-        self.swap2_mode_button = gui.ChooseMode(1)
-
+        self.player_on_move = self.player1
+        self.game_mode = "standard"
+        self.gui_board = [[gui.Square() for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
+        self.gui_on_move = gui.OnMove()
+        self.button_new_game = gui.ButtonRightMenu(0, "New Game")
+        self.button_menu = gui.ButtonRightMenu(1, "Menu")
+        self.button_white_stone = gui.ButtonChooseColor(0)
+        self.button_black_stone = gui.ButtonChooseColor(1)
+        self.button_ai_opponent = gui.ButtonChooseOpponent(0)
+        self.button_ai_player = gui.ButtonChooseOpponent(1)
+        self.button_standard_game_mode = gui.ButtonChooseMode(0)
+        self.button_swap2_game_mode = gui.ButtonChooseMode(1)
+        self.last_move = tuple()
 
     def menu(self):
-        self.on_move_gui.white(self.on_move.name)
-        self.white_stone_button.white(True)
-        self.black_stone_button.black()
-        self.ai_opponent_button.AI(True)
-        self.player_opponent_button.player()
-        self.standard_mode_button.stanard(True)
-        self.swap2_mode_button.swap2()
+        """Setting up on scren menu where player can choose game options before start. """
+        self.gui_on_move.white(self.player_on_move.name)
+        self.button_white_stone.white(selected=True)
+        self.button_black_stone.black()
+        self.button_ai_opponent.AI(selected=True)
+        self.button_ai_player.player()
+        self.button_standard_game_mode.standard(selected=True)
+        self.button_swap2_game_mode.swap2()
         pygame.display.update()
-        run = True
-        while run:
+        while self.game_running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
-                    if self.buttton_new_game.graphic.collidepoint(pos):
-                        run = False
-                        return self.player1, self.player2, self.on_move, self.mode
-                    if self.white_stone_button.graphic.collidepoint(pos):
-                        print("Clicked white")
-                        self.on_move = self.player1
-                        self.on_move_gui.white(self.player1.name)
-                        self.white_stone_button.white(True)
-                        self.black_stone_button.black()
-                    if self.black_stone_button.graphic.collidepoint(pos):
-                        print("Clicked black")
-                        self.on_move_gui.black(self.player2.name)
-                        self.white_stone_button.white(False)
-                        self.black_stone_button.black(True)
-                        self.on_move = self.player2
-                    if self.ai_opponent_button.graphic.collidepoint(pos):
-                        print("Clicked ai_opponent_button")
-                        self.player2.name="AI"
-                        if self.on_move == self.player2:
-                            self.on_move_gui.black(self.player2.name)
-                        self.ai_opponent_button.AI(True)
-                        self.player_opponent_button.player(False)
-                    if self.player_opponent_button.graphic.collidepoint(pos):
-                        self.player2.set_name("Gracz2")
-                        if self.on_move==self.player2:
-                            self.on_move_gui.black(self.player2.name)
-                        self.ai_opponent_button.AI(False)
-                        self.player_opponent_button.player(True)
-                        print("Clicked player_opponent_button")
-                    if self.standard_mode_button.graphic.collidepoint(pos):
-                        self.mode = "standard"
-                        self.standard_mode_button.stanard(True)
-                        self.swap2_mode_button.swap2()
-                        print("Clicked standard_mode_button")
-                    if self.swap2_mode_button.graphic.collidepoint(pos):
-                        self.mode = "swap2"
-                        self.standard_mode_button.stanard()
-                        self.swap2_mode_button.swap2(True)
-                        print("Clicked swap2_mode_button")
+                    if self.button_new_game.graphic.collidepoint(pos):
+                        self.game_running = False
+                        return self.player1, self.player2, self.player_on_move, self.game_mode
+                    if self.button_white_stone.graphic.collidepoint(pos):
+                        self.player_on_move = self.player1
+                        self.gui_on_move.white(self.player1.name)
+                        self.button_white_stone.white(selected=True)
+                        self.button_black_stone.black(selected=False)
+                    if self.button_black_stone.graphic.collidepoint(pos):
+                        self.gui_on_move.black(self.player2.name)
+                        self.button_white_stone.white(selected=False)
+                        self.button_black_stone.black(selected=True)
+                        self.player_on_move = self.player2
+                    if self.button_ai_opponent.graphic.collidepoint(pos):
+                        self.player2.name = "AI"
+                        if self.player_on_move == self.player2:
+                            self.gui_on_move.black(self.player2.name)
+                        self.button_ai_opponent.AI(selected=True)
+                        self.button_ai_player.player(selected=False)
+                    if self.button_ai_player.graphic.collidepoint(pos):
+                        self.player2.name = PLAYER2_NAME
+                        if self.player_on_move == self.player2:
+                            self.gui_on_move.black(self.player2.name)
+                        self.button_ai_opponent.AI(selected=False)
+                        self.button_ai_player.player(selected=True)
+                    if self.button_standard_game_mode.graphic.collidepoint(pos):
+                        self.game_mode = "standard"
+                        self.button_standard_game_mode.standard(selected=True)
+                        self.button_swap2_game_mode.swap2(selected=False)
+                    if self.button_swap2_game_mode.graphic.collidepoint(pos):
+                        self.game_mode = "swap2"
+                        self.button_standard_game_mode.standard()
+                        self.button_swap2_game_mode.swap2(True)
                     pygame.display.update()
 
-                    print("Player 1:", self.player1.name)
-                    print("Player 2:", self.player2.name)
-                    print("On move:", self.on_move.name)
-                    print("Mode:", self.mode)
-
     def ai_move(self):
-        if self.on_move.get_stone_color()=="black":
+        """Playing the best found movie in AI module using mini max alghoritm."""
+        if self.player_on_move.stone_color == "black":
             best_move = self.ai.play_best(self.played_moves)
         else:
-            best_move = self.ai.play_best(self.played_moves,black_color=False)
-        print(best_move[0], " x ", best_move[1])
+            best_move = self.ai.play_best(self.played_moves, black_color=False)
         self.make_move(best_move[0], best_move[1])
-        if self.arbiter.checkBoardState(self.move_number, self.on_move.name):
-            self.run = False
+        if self.game_arbiter.check_board_state(self.player_on_move.name):
+            self.game_running = False
         self.next_turn()
         pygame.display.update()
 
     def next_turn(self):
-        if self.on_move == self.player1:
-            self.on_move = self.player2
-            if self.on_move.get_stone_color()==WHITE:
-                self.on_move_gui.white(self.on_move.name)
+        """Method changes player on move and all GUI about it."""
+        if self.player_on_move == self.player1:
+            self.player_on_move = self.player2
+            if self.player_on_move.stone_color == WHITE:
+                self.gui_on_move.white(self.player_on_move.name)
             else:
-                self.on_move_gui.black(self.on_move.name)
-        elif self.on_move == self.player2:
-            self.on_move = self.player1
-            if self.on_move.get_stone_color() == WHITE:
-                self.on_move_gui.white(self.on_move.name)
+                self.gui_on_move.black(self.player_on_move.name)
+        elif self.player_on_move == self.player2:
+            self.player_on_move = self.player1
+            if self.player_on_move.stone_color == WHITE:
+                self.gui_on_move.white(self.player_on_move.name)
             else:
-                self.on_move_gui.black(self.on_move.name)
+                self.gui_on_move.black(self.player_on_move.name)
 
     def make_move(self, i, j):
-        print("Ruch numer:", self.move_number)
-        if self.on_move.get_stone_color() == WHITE:
-            self.board_gui[i][j].white_stone(i, j)
-            self.board[i][j] = WHITE
+        """Making move on given i,j from ai_move or selected by user."""
+        if self.player_on_move.stone_color == WHITE:
+            if self.game_move_number > 0:
+                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_black_stone(self.last_move[0], self.last_move[1])
+            self.gui_board[i][j].draw_white_stone(i, j, True)
+            self.game_board[i][j] = WHITE
         else:
-            self.board_gui[i][j].black_stone(i, j)
-            self.board[i][j] = BLACK
-        self.move_number += 1
+            if self.game_move_number > 0:
+                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_white_stone(self.last_move[0], self.last_move[1])
+            self.gui_board[i][j].draw_black_stone(i, j, True)
+            self.game_board[i][j] = BLACK
+        self.game_move_number += 1
         self.played_moves.add((i, j))
         self.ai.add_neighbours_squares(i, j, 0, self.played_moves)
+        self.last_move = i, j
 
     def playgame(self):
-        pass
+        """Base function handling all game logic  chosen in menu mode"""

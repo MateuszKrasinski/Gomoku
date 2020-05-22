@@ -1,35 +1,35 @@
+"""Module contains class Standard which allows to start game on standard rules"""
 import sys
+
 import pygame
+
 import gui
-from game import Game
+import game
 
 BOARDSIZE = 15
 
 
-class Standard(Game):
+class Standard(game.Game):
+    """Class contains all methods and attributes to play game on standard rules."""
+
     def __init__(self, player1, player2, on_move):
+        """Init from base class init and override with arguments chosen in game menu."""
         super(Standard, self).__init__()
         self.player1 = player1
         self.player2 = player2
-        self.on_move = on_move
-        if self.on_move.get_stone_color()=="white":
-            self.on_move_gui.white(self.on_move.name)
+        self.player_on_move = on_move
+        if self.player_on_move.stone_color == "white":
+            self.gui_on_move.white(self.player_on_move.name)
         else:
-            self.on_move_gui.black(self.on_move.name)
-        print()
-        print("Gracz1:", self.player1.name)
-        print("Gracz2:", self.player2.name)
-        print("Na ruchu:", self.on_move.name)
-        print()
-
+            self.gui_on_move.black(self.player_on_move.name)
 
     def playgame(self):
-        gui.draw_board(self.board_gui)
+        """Starts game on standard rules restart or back to menu depending of clicked button."""
+        gui.draw_board(self.gui_board)
         while True:
             pygame.display.update()
             pygame.time.delay(100)
-            if self.on_move.name == "AI":
-                print("Tu ma nie wchodzic")
+            if self.player_on_move.name == "AI":
                 self.ai_move()
             # handle events
             for event in pygame.event.get():
@@ -37,21 +37,20 @@ class Standard(Game):
                     sys.exit(0)
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
-                    if self.buttton_menu.graphic.collidepoint(pos):
+                    if self.button_menu.graphic.collidepoint(pos):
                         return "Menu"
-                    if self.buttton_new_game.graphic.collidepoint(pos):
+                    if self.button_new_game.graphic.collidepoint(pos):
                         return "Restart"
-                    if self.run:
+                    if self.game_running:
                         for i in range(0, BOARDSIZE):
                             for j in range(0, BOARDSIZE):
-                                if self.board_gui[i][j].graphic.collidepoint(
-                                        pos) and self.board[i][j] == '_':
-                                    if self.on_move.name != "AI":
+                                if self.gui_board[i][j].graphic.collidepoint(
+                                        pos) and self.game_board[i][j] == '_':
+                                    if self.player_on_move.name != "AI":
                                         self.make_move(i, j)
                                         pygame.display.update()
-                                    if self.arbiter.checkBoardState(self.move_number,
-                                                                    self.on_move.name):
-                                        self.run = False
+                                    if self.game_arbiter.check_board_state(self.player_on_move.name):
+                                        self.game_running = False
                                         break
                                     self.next_turn()
                     pygame.display.update()

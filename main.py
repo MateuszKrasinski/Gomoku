@@ -1,34 +1,35 @@
-import time
-import sys
+"""Main module controlling changing of game modes"""
+import collections
 
-import swap2, standard
 import pygame
 
 import game
+import standard
+import swap2
 
-while (True):
+RESTART = "Restart"
+MENU = "Menu"
+SWAP2 = "swap2"
+STANDARD = "standard"
+GameSettings = collections.namedtuple("GameSettings", "player1,player2 game_mode")
+while True:
 
     gra = game.Game()
-    result = gra.menu()
-    if result:
-        if result[3] == "standard":
-            gra = standard.Standard(result[0], result[1], result[2])
-            gra = True
-            while gra:
-                gra = standard.Standard(result[0], result[1], result[2])
-                gra = gra.playgame()
-                if gra == "Restart":
+    GameSettings = gra.menu()
+    if GameSettings:
+        if GameSettings[3] == STANDARD:
+            while True:
+                if standard.Standard(GameSettings[0], GameSettings[1],
+                                     GameSettings[2]).playgame() == RESTART:
                     continue
-                if gra == "Menu":
-                    break
-        elif result[3] == "swap2":
-            gra = True
-            while gra:
-                gra = swap2.Swap2(result[0], result[1], result[2])
-                gra = gra.playgame()
-                if gra == "Restart":
-                    pass
-                if gra == "Menu":
-                    break
+                break
+        elif GameSettings[3] == SWAP2:
+            while True:
+                if swap2.Swap2(GameSettings[0], GameSettings[1],
+                               GameSettings[2]).playgame() == RESTART:
+                    continue
+                break
 
     pygame.display.update()
+if __name__ == '__main__':
+    main()

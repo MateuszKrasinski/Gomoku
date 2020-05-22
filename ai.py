@@ -1,3 +1,4 @@
+"""Module contains AI class which ensure artificial intelligence working correctly"""
 import math
 import time
 import check_board_state
@@ -14,26 +15,29 @@ BLACK = "black"
 
 
 class AI():
-    def __init__(self, board, move_number):
-        self.board = board
-        self.move_number = move_number
-        self.arbiter = check_board_state.CheckBoardState(self.board)
-        self.optional_moves = [set() for i in range(MAX_DEPTH + 1)]
-        self.important_moves = [set() for i in range(MAX_DEPTH + 1)]
-        self.predicted_moves = set()
-        self.played_moves = set()
-        self.good_moves = []
+    """Class contains all needed attributes and methods to create artificial intelligence object"""
 
-    def mini_max(self, board, depth, max_depth, is_maximizing, alpha, beta):
+    def __init__(self, board):
+        """Init with board from game module and all needed attributes to make ai optimal."""
+        self.game_board = board
+        self.arbiter = check_board_state.CheckBoardState(self.game_board)
+        self.squares_with_neighbours = [set() for i in range(MAX_DEPTH + 1)]
+        self.squares_with_neighbours_sorted = [set() for i in range(MAX_DEPTH + 1)]
+        self.predicted_moves_in_mini_max = set()
+        self.played_moves_in_game = set()
+        self.threatening_squares = []
+
+    def mini_max(self, board, depth, max_depth, is_maximizing, alpha=-math.inf, beta=math.inf):
+        """Methods return tuple (i,j) with best evaluation of position based on given arguments."""
         if self.arbiter.check_win():
             if is_maximizing:
                 return WHITE_WIN
             return BLACK_WIN
-        if self.arbiter.check_draw(self.move_number):
+        if self.arbiter.check_draw():
             return 0
         if depth == max_depth:
             return self.arbiter.evaluate()
-        min_max_set = self.optional_moves[depth]
+        min_max_set = self.squares_with_neighbours[depth]
         secik = []
         if is_maximizing:
             best_score = -math.inf
@@ -42,16 +46,15 @@ class AI():
                 score = self.mini_max(board, depth, depth, False, alpha, beta)
                 board[i][j] = "_"
                 secik.append((i, j, score))
-            secik = self.sort_moves_by_evaluation(secik, True)
-            for i, j, evaluation in secik[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
+            secik = sort_moves_by_evaluation(secik, True)
+            for square in secik[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
+                i, j = square[0], square[1]
                 board[i][j] = BLACK
-                self.move_number = self.move_number + 1
-                self.add_neighbours_squares(i, j, depth + 1, self.played_moves)
+                self.add_neighbours_squares(i, j, depth + 1, self.played_moves_in_game)
                 score = self.mini_max(board, depth + 1, MAX_DEPTH, False, alpha,
                                       beta)
-                self.remove_neigbours_squares(i, j, depth + 1)
+                self.remove_neighbours_squares(i, j, depth + 1)
                 board[i][j] = "_"
-                self.move_number = self.move_number - 1
                 best_score = max(score, best_score)
                 alpha = max(alpha, best_score)
                 if beta <= alpha:
@@ -66,15 +69,14 @@ class AI():
             score = self.mini_max(board, depth, depth, True, alpha, beta)
             board[i][j] = "_"
             secik.append((i, j, score))
-        secik = self.sort_moves_by_evaluation(secik, False)
-        for i, j, evaluation in secik[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
+        secik = sort_moves_by_evaluation(secik, False)
+        for square in secik[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
+            i, j = square[0], square[1]
             board[i][j] = WHITE
-            self.move_number += 1
-            self.add_neighbours_squares(i, j, depth + 1, self.played_moves)
+            self.add_neighbours_squares(i, j, depth + 1, self.played_moves_in_game)
             score = self.mini_max(board, depth + 1, MAX_DEPTH, True, alpha, beta)
-            self.remove_neigbours_squares(i, j, depth + 1)
+            self.remove_neighbours_squares(i, j, depth + 1)
             board[i][j] = "_"
-            self.move_number -= 1
             best_score = min(score, best_score)
             beta = min(beta, best_score)
             if beta <= alpha:
@@ -83,88 +85,69 @@ class AI():
                 break
         return best_score
 
-    def sort_moves_by_evaluation(self, sub_li, is_maximazing):
-        return sorted(sub_li, key=lambda x: x[2], reverse=is_maximazing)
-
     def forced_move(self):
-        self.important_moves[0].clear()
-        print("Checking if there is forced move...")
-        if self.move_number == 0 and len(self.optional_moves[0]) == 0:
-            self.optional_moves[0].add((7, 7))
-        for i, j in self.optional_moves[0]:
-            if self.board[i][j] == "_":
-                self.board[i][j] = BLACK
-                score = self.mini_max(self.board, 0, 0, False, -math.inf,
+        """Method checks winning or losing forced move and if there is return move as tuple(i,j)."""
+        self.squares_with_neighbours_sorted[0].clear()
+        if len(self.squares_with_neighbours[0]) == 0:
+            self.squares_with_neighbours[0].add((7, 7))
+        for i, j in self.squares_with_neighbours[0]:
+            if self.game_board[i][j] == "_":
+                self.game_board[i][j] = BLACK
+                score = self.mini_max(self.game_board, 0, 0, False, -math.inf,
                                       math.inf)
-                self.board[i][j] = "_"
-                self.important_moves[0].add((i, j, score))
+                self.game_board[i][j] = "_"
+                self.squares_with_neighbours_sorted[0].add((i, j, score))
             if score == BLACK_WIN:
-                print(
-                    "Forced winning move ! Wykonano ruch na b[{}][{}] best_score=={}".format(i, j,
-                                                                                             score))
                 return i, j
-        print("Not found winning forced move in depth 0")
-        for i, j in self.optional_moves[0]:
-            if self.board[i][j] == "_":
-                self.board[i][j] = WHITE
-                score = self.mini_max(self.board, 1, 1, True, -math.inf,
+        for i, j in self.squares_with_neighbours[0]:
+            if self.game_board[i][j] == "_":
+                self.game_board[i][j] = WHITE
+                score = self.mini_max(self.game_board, 1, 1, True, -math.inf,
                                       math.inf)
-                self.board[i][j] = "_"
+                self.game_board[i][j] = "_"
                 if score == WHITE_WIN:
-                    print(
-                        "Forced defensive move ! Wykonano ruch na b[{}][{}] best_score=={}".format(
-                            i, j, score))
                     return i, j
-        print("Not found defensive forced move in depth 0 in time:")
         return False
 
-    def play_best(self, played_moves,black_color=True):
-        self.played_moves = played_moves
-        print("played_moves moves:", len(self.played_moves))
+    def play_best(self, played_moves, black_color=True):
+        """Method returns best move as tuple (i,j), first using forced_move() else mini_max()."""
+        self.played_moves_in_game = played_moves
         best_score = -math.inf
         if self.forced_move() is not False:
             i, j = self.forced_move()
-            self.important_moves[0].clear()
+            self.squares_with_neighbours_sorted[0].clear()
             return i, j
-        self.mini_max(self.board, 0, 0, True, -math.inf, math.inf)
+        self.mini_max(self.game_board, 0, 0, True, -math.inf, math.inf)
         start_time = time.time()
-        self.good_moves = self.arbiter.good_moves
-        secik = self.sort_moves_by_evaluation(self.important_moves[0], black_color)
-        print("{}Important moves{}".format(len(secik), secik))
-        print("         Good moves:", self.good_moves)
-        for i,j,z in self.good_moves:
+        self.threatening_squares = self.arbiter.good_moves
+        secik = sort_moves_by_evaluation(self.squares_with_neighbours_sorted[0], black_color)
+        for i, j, score in self.threatening_squares:
             for item in secik:
-                ii,jj,zz=item
-                if i==ii and j==jj:
+                if i == item[0] and j == item[1]:
                     secik.remove(item)
-        print("Suma: ", self.good_moves + secik)
-        secik = self.good_moves + secik
+        print("All considered moves: ", self.threatening_squares + secik)
+        secik = self.threatening_squares + secik
         for i, j, score in secik:
-            if self.board[i][j] == "_" and (time.time() - start_time < MAX_MOVE_TIME):
-                self.board[i][j] = BLACK
-                self.move_number = self.move_number + 1
-                self.add_neighbours_squares(i, j, 1, self.played_moves)
-                score = self.mini_max(self.board, 1, MAX_DEPTH, False,
-                                      -math.inf,
-                                      math.inf)
-                self.remove_neigbours_squares(i, j, 1)
-                self.board[i][j] = "_"
-                self.move_number -= 1
-                print("Dla b[{}][{}]  score=={}".format(i, j, score))
+            if self.game_board[i][j] == "_" and (time.time() - start_time < MAX_MOVE_TIME):
+                self.game_board[i][j] = BLACK
+                self.add_neighbours_squares(i, j, 1, self.played_moves_in_game)
+                score = self.mini_max(self.game_board, 1, MAX_DEPTH, False)
+                self.remove_neighbours_squares(i, j, 1)
+                self.game_board[i][j] = "_"
+                print("Dla board[{}][{}]  evaluation={}".format(i, j, score))
                 if score == BLACK_WIN:
                     best_move = i, j
                     break
                 if score > best_score:
                     best_score = score
                     best_move = i, j
-        print("Wykonano ruch na b[{}][{}] best_score=={}".format(best_move[0], best_move[1],
-                                                                 best_score))
-        self.important_moves[0].clear()
-        print("Predicted:", len(self.predicted_moves))
+        print("Wykonano ruch na board[{}][{}] evaluation={}".format(best_move[0], best_move[1],
+                                                                    best_score))
+        self.squares_with_neighbours_sorted[0].clear()
         return best_move
 
-
     def add_neighbours_squares(self, i, j, depth, played_moves):
+        """Adding to set self.squares_with_neighbours new squares."""
         down, top, left, right = 1, 1, 1, 1
         if i <= 0:
             top = 0
@@ -174,25 +157,27 @@ class AI():
             right = 0
         if i >= BOARDSIZE - 1:
             down = 0
-        self.neihbours = {(i - top, j + right), (i - top, j - left), (i - top, j),
-                          (i, j - left), (i, j + right), (i + down, j + right),
-                          (i + down, j - left), (i + down, j)}
-        self.played_moves = played_moves
+        neighbours = {(i - top, j + right), (i - top, j - left), (i - top, j),
+                      (i, j - left), (i, j + right), (i + down, j + right),
+                      (i + down, j - left), (i + down, j)}
+        self.played_moves_in_game = played_moves
         if depth == 0:
-            self.optional_moves[0] = self.optional_moves[depth].union(
-                self.neihbours)
-            self.optional_moves[depth].difference_update(self.played_moves)
+            self.squares_with_neighbours[0] = self.squares_with_neighbours[depth].union(neighbours)
+            self.squares_with_neighbours[depth].difference_update(self.played_moves_in_game)
         elif depth != 0:
-            self.predicted_moves.add((i, j))
-            self.optional_moves[depth] = self.optional_moves[depth - 1].union(
-                self.neihbours)
-            self.optional_moves[depth].difference_update(self.played_moves)
-            self.optional_moves[depth].difference_update((self.predicted_moves))
+            self.predicted_moves_in_mini_max.add((i, j))
+            self.squares_with_neighbours[depth] = self.squares_with_neighbours[depth - 1].union(
+                neighbours)
+            self.squares_with_neighbours[depth].difference_update(self.played_moves_in_game)
+            self.squares_with_neighbours[depth].difference_update(
+                (self.predicted_moves_in_mini_max))
 
-        if depth == 0:
-            print("{}Optional moves{}".format(len(self.optional_moves[0]),
-                                              self.optional_moves[0]))
+    def remove_neighbours_squares(self, i, j, depth):
+        """Removing from set self.squares_with_neighbours squares added in minimax."""
+        self.squares_with_neighbours[depth] = (self.squares_with_neighbours[depth - 1])
+        self.predicted_moves_in_mini_max.remove((i, j))
 
-    def remove_neigbours_squares(self, i, j, depth):
-        self.optional_moves[depth] = (self.optional_moves[depth - 1])
-        self.predicted_moves.remove((i, j))
+
+def sort_moves_by_evaluation(sub_li, is_maximazing):
+    """Sort moves by evaluation from minimax algorithm"""
+    return sorted(sub_li, key=lambda x: x[2], reverse=is_maximazing)
