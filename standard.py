@@ -49,7 +49,8 @@ class Standard(game.Game):
                                     if self.player_on_move.name != "AI":
                                         self.make_move(i, j)
                                         pygame.display.update()
-                                    if self.game_arbiter.check_board_state(self.player_on_move.name):
+                                    if self.game_arbiter.check_board_state(
+                                            self.player_on_move.name):
                                         self.game_running = False
                                         break
                                     self.next_turn()

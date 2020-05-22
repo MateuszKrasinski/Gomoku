@@ -1,3 +1,4 @@
+"""Module contains class CheckBoardState which allows to find end of the game."""
 import gui
 
 BOARDSIZE = 15
@@ -8,6 +9,7 @@ GOOD_MOVE = 3000
 
 
 class CheckBoardState:
+    """Class has all attributes to find end of the game and count consecutive stones."""
     def __init__(self, board):
         self.game_board = board
         self.good_moves = []
@@ -16,6 +18,7 @@ class CheckBoardState:
         self.two_stones = 0
 
     def check_rows(self):
+        """Checking if there is 5 stones in row return True else evaluate position."""
         self.four_stones = 0
         self.three_stones = 0
         self.two_stones = 0
@@ -30,14 +33,14 @@ class CheckBoardState:
                         return True
                     if consecutive == 4:
                         if self.game_board[i][j + 1] == EMPTY and self.game_board[i][
-                            j - 4] == EMPTY:
+                                j - 4] == EMPTY:
                             if self.game_board[i][j] == WHITE:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
                     elif consecutive == 3:
                         if self.game_board[i][j + 1] == EMPTY and self.game_board[i][
-                            j - 3] == EMPTY:
+                                j - 3] == EMPTY:
                             if self.game_board[i][j] == WHITE:
                                 self.three_stones += 1
                             else:
@@ -46,7 +49,7 @@ class CheckBoardState:
                             self.good_moves.append((i, j - 3, GOOD_MOVE))
                     elif consecutive == 2:
                         if self.game_board[i][j + 1] == EMPTY and self.game_board[i][
-                            j - 2] == EMPTY:
+                                j - 2] == EMPTY:
                             if self.game_board[i][j] == WHITE:
                                 self.two_stones += 1
                             else:
@@ -55,6 +58,7 @@ class CheckBoardState:
         return False
 
     def check_cols(self):
+        """Checking if there is 5 stones in cols return True else evaluate position."""
         for j in range(0, BOARDSIZE):
             consecutive = 1
             for i in range(0, BOARDSIZE - 1):
@@ -70,7 +74,7 @@ class CheckBoardState:
                             self.two_stones -= 1
                     elif consecutive == 3:
                         if self.game_board[i + 1][j] == EMPTY and self.game_board[i - 3][
-                            j] == EMPTY:
+                                j] == EMPTY:
                             if self.game_board[i][j] == WHITE:
                                 self.three_stones += 1
                             else:
@@ -79,7 +83,7 @@ class CheckBoardState:
                             self.good_moves.append((i + -3, j, GOOD_MOVE))
                     elif consecutive == 4:
                         if self.game_board[i + 1][j] == EMPTY and self.game_board[i - 4][
-                            j] == EMPTY:
+                                j] == EMPTY:
                             if self.game_board[i][j] == WHITE:
                                 self.four_stones += 1
                             else:
@@ -88,6 +92,7 @@ class CheckBoardState:
         return False
 
     def check_diagonal(self):
+        """Checking if there is 5 stones in diagonal return True else evaluate position."""
         # 1 left-up corner to main diagonal(\)
         for i in range(1, BOARDSIZE):
             consecutive = 1
@@ -228,11 +233,13 @@ class CheckBoardState:
         return False
 
     def check_win(self):
+        """Method returns True if found winning combination."""
         if self.check_rows() or self.check_cols() or self.check_diagonal():
             return True
         return False
 
-    def check_draw(self, move_number=0):
+    def check_draw(self):
+        """Method returns True if found drawing combination."""
         for i in range(15):
             for j in range(15):
                 if self.game_board[i][j] == EMPTY:
@@ -240,6 +247,7 @@ class CheckBoardState:
         return True
 
     def check_board_state(self, name):
+        """Return true if finds end of game."""
         if self.check_win():
             gui.message_win(name)
             return True
@@ -249,5 +257,6 @@ class CheckBoardState:
         return False
 
     def evaluate(self):
+        """Evaluate position basing on number of consecutive stones."""
         return (self.four_stones * (-1000) + self.three_stones * (
             -100) + self.two_stones * (-10))

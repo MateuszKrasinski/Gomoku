@@ -146,11 +146,11 @@ def draw_board(square):
     for i in range(0, BOARD_SIZE):
         for j in range(0, BOARD_SIZE):
             square[i][j].draw_empty_square(i, j)
-        message("{}".format(i), LEFT_MARGIN - SQUARE_WIDTH // 3 - BORDER, TOP_MARGIN +
+        message("{}".format(i + 1), LEFT_MARGIN - SQUARE_WIDTH // 3 - BORDER, TOP_MARGIN +
                 SQUARE_WIDTH // 2 + i * (SQUARE_WIDTH + SQUARE_MARGIN) + SQUARE_WIDTH // 2,
                 FONT_SIZE)
     for i in range(BOARD_SIZE):
-        message("{}".format(i), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
+        message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
                 (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
     pygame.display.update()
 
@@ -193,7 +193,7 @@ class OnMove():
     def change_message(self, name):
         """Method changes player name on turn."""
         pygame.draw.rect(SCREEN, Color.BOARD.value, (SCREEN_WIDTH - RIGHT_MARGIN,
-                                                     SCREEN_HEIGHT // 3,
+                                                     SCREEN_HEIGHT // 3.5,
                                                      int(SQUARE_WIDTH * 1.7),
                                                      SQUARE_WIDTH // 2))
         message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
