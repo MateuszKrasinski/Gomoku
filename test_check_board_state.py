@@ -1,5 +1,6 @@
 """Module tests check_board_state module"""
 import unittest
+
 import check_board_state
 
 EMPTY = "_"

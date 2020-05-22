@@ -1,10 +1,11 @@
 """Module contains class Swap2 which allows to start game on swap2 rules."""
-
 import sys
 import random
+
 import pygame
+
 import gui
-from game import Game
+import game
 
 BOARDSIZE = 15
 MENU = "Menu"
@@ -15,7 +16,7 @@ WHITE = "white"
 BLACK = "BLACK"
 
 
-class Swap2(Game):
+class Swap2(game.Game):
     """Class contains all methods and attributes to play game on standard rules."""
 
     def __init__(self, player1, player2, on_move):

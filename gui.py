@@ -35,6 +35,7 @@ MESSAGE_CHOOSE_COLOR_X = LEFT_MARGIN + 25
 MESSAGE_RULES_X = BOARD_WIDTH - 58
 MESSAGE_OPPONENT_X = 226
 MESSAGE_NUMBERS_X = 30
+MESSAGE_WIN_HEIGHT = 40
 CHOOSE_COLOR_X = 112
 pygame.init()
 pygame.display.set_caption(WINDOW_CAPTION)
@@ -49,8 +50,9 @@ def message(what, x, y, font_size, color=Color.BLACK.value):
 
 def message_win(name):
     """Function prints on top of the screen message player_name wins!"""
-    rect = pygame.Rect(LEFT_MARGIN, 4, BOARD_WIDTH - 4, 40 - 4)
-    border = pygame.Rect(LEFT_MARGIN - 2, 2, BOARD_WIDTH, 40)
+    rect = pygame.Rect(LEFT_MARGIN, 2 * BORDER, BOARD_WIDTH - 2 * BORDER,
+                       MESSAGE_WIN_HEIGHT - 2 * BORDER)
+    border = pygame.Rect(LEFT_MARGIN - BORDER, BORDER, BOARD_WIDTH, MESSAGE_WIN_HEIGHT)
     pygame.draw.rect(SCREEN, Color.BLACK.value, border)
     pygame.draw.rect(SCREEN, Color.BUTTON.value, rect)
     message(name + " WINS!", rect.center[0], rect.center[1], BIG_FONT_SIZE)
@@ -59,7 +61,12 @@ def message_win(name):
 
 def message_draw():
     """Function prints on top of the screen message DRAW!"""
-    message("DRAW!", int(SCREEN_WIDTH // 2), int(SCREEN_HEIGHT // 5), BIG_FONT_SIZE)
+    rect = pygame.Rect(LEFT_MARGIN, 2 * BORDER, BOARD_WIDTH - 2 * BORDER,
+                       MESSAGE_WIN_HEIGHT - 2 * BORDER)
+    border = pygame.Rect(LEFT_MARGIN - BORDER, BORDER, BOARD_WIDTH, MESSAGE_WIN_HEIGHT)
+    pygame.draw.rect(SCREEN, Color.BLACK.value, border)
+    pygame.draw.rect(SCREEN, Color.BUTTON.value, rect)
+    message("DRAW!", rect.center[0], rect.center[1], BIG_FONT_SIZE)
     pygame.display.update()
 
 

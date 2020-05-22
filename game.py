@@ -1,6 +1,7 @@
 """Module contains class Player and Game which allows to create base of the game"""
 import sys
 from dataclasses import dataclass
+
 import pygame
 
 import gui
