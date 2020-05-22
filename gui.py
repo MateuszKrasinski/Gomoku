@@ -14,9 +14,9 @@ class Color(Enum):
 
 
 WINDOW_CAPTION = 'Gomoku'
-SETTINGS_TOP_MARGIN = 10
 BIG_FONT_SIZE = 40
 FONT_SIZE = 14
+SETTINGS_TOP_MARGIN = 10
 BORDER = 2
 BOARD_SIZE = 15
 SQUARE_WIDTH = 30
@@ -31,12 +31,13 @@ TOP_MARGIN = int(SCREEN_HEIGHT - BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN)) //
 RIGHT_MARGIN = int(SCREEN_WIDTH - BOARD_WIDTH - LEFT_MARGIN)
 SETTINGS_MESSAGE_TOP_MARGIN = TOP_MARGIN - 5
 BUTTON_CHOOSE_MODE_WIDTH = 70
-pygame.init()
-pygame.display.set_caption(WINDOW_CAPTION)
 MESSAGE_CHOOSE_COLOR_X = LEFT_MARGIN + 25
 MESSAGE_RULES_X = BOARD_WIDTH - 58
 MESSAGE_OPPONENT_X = 226
+MESSAGE_NUMBERS_X = 30
 CHOOSE_COLOR_X = 112
+pygame.init()
+pygame.display.set_caption(WINDOW_CAPTION)
 
 
 def message(what, x, y, font_size, color=Color.BLACK.value):
@@ -58,7 +59,7 @@ def message_win(name):
 
 def message_draw():
     """Function prints on top of the screen message DRAW!"""
-    message("DRAW!", int(SCREEN_WIDTH / 2), int(SCREEN_HEIGHT / 1 / 5), BIG_FONT_SIZE)
+    message("DRAW!", int(SCREEN_WIDTH // 2), int(SCREEN_HEIGHT // 5), BIG_FONT_SIZE)
     pygame.display.update()
 
 
@@ -138,11 +139,12 @@ def draw_board(square):
     for i in range(0, BOARD_SIZE):
         for j in range(0, BOARD_SIZE):
             square[i][j].draw_empty_square(i, j)
-        message("{}".format(i), LEFT_MARGIN - SQUARE_WIDTH // 3 - 2, TOP_MARGIN + SQUARE_WIDTH // 2
-                + i * (SQUARE_WIDTH + SQUARE_MARGIN) + SQUARE_WIDTH // 2, FONT_SIZE)
+        message("{}".format(i), LEFT_MARGIN - SQUARE_WIDTH // 3 - BORDER, TOP_MARGIN +
+                SQUARE_WIDTH // 2 + i * (SQUARE_WIDTH + SQUARE_MARGIN) + SQUARE_WIDTH // 2,
+                FONT_SIZE)
     for i in range(BOARD_SIZE):
-        message("{}".format(i), LEFT_MARGIN + SQUARE_WIDTH // 2 + i *
-                (SQUARE_WIDTH + SQUARE_MARGIN), BOARD_WIDTH + TOP_MARGIN + 20, FONT_SIZE)
+        message("{}".format(i), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
+                (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
     pygame.display.update()
 
 
@@ -151,7 +153,7 @@ class OnMove():
 
     def __init__(self):
         self.left_down_corner_x = SCREEN_WIDTH - 70
-        self.left_down_corner_y = SCREEN_HEIGHT / 3.5
+        self.left_down_corner_y = SCREEN_HEIGHT // 3.5
         self.button_width = RIGHT_MARGIN * 1 // 10
         self.button_height = RIGHT_MARGIN * 1 // 10
         self.graphic = pygame.Rect(
@@ -164,30 +166,30 @@ class OnMove():
     def black(self, name):
         """Draws black stone as graphic on turn and name given in function."""
         pygame.draw.rect(SCREEN, Color.BOARD.value, self.graphic_stone)
-        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 5,
+        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
                 self.graphic_stone.center[1], FONT_SIZE)
         self.graphic = pygame.draw.circle(SCREEN, Color.BLACK.value, (
-            int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - 2,
+            int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - BORDER,
             int(self.graphic_stone.midright[1]) - BORDER), SQUARE_WIDTH // 2.5)
         pygame.display.update()
 
     def white(self, name):
         """Draws black stone as graphic on turn and name given in function."""
         pygame.draw.rect(SCREEN, Color.BOARD.value, self.graphic_stone)
-        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 5,
+        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
                 self.graphic_stone.center[1], FONT_SIZE)
         self.graphic = pygame.draw.circle(SCREEN, Color.WHITE.value, (
-            int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - 2,
+            int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - BORDER,
             int(self.graphic_stone.midright[1] - BORDER)), SQUARE_WIDTH // 2.5)
         pygame.display.update()
 
     def change_message(self, name):
         """Method changes player name on turn."""
         pygame.draw.rect(SCREEN, Color.BOARD.value, (SCREEN_WIDTH - RIGHT_MARGIN,
-                                                     SCREEN_HEIGHT // 3.5,
+                                                     SCREEN_HEIGHT // 3,
                                                      int(SQUARE_WIDTH * 1.7),
                                                      SQUARE_WIDTH // 2))
-        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 5,
+        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
                 self.graphic_stone.center[1], FONT_SIZE)
         pygame.display.update()
 
