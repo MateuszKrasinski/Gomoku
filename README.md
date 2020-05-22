@@ -20,16 +20,13 @@ bazowa  Game() definiuje między innymi funkcję wirtualną playGame() nadpisywa
 klasach pochodnych. Realizowane powinny być przynajmniej dwa zestawy reguł,
 jako dwie klasy pochodne.
 # Testy
-1. Wykonanie po dwa ruchy przez każdego z graczy - monety spadają na dół pola
-gry lub zatrzymują się na już wrzuconym żetonie.
-2. Ułożenie pionowej linii i przez jednego gracza - oczekiwana informacja o
+1. Ułożenie pionowej linii i przez jednego gracza - oczekiwana informacja o
 jego wygranej.
-3. Ułożenie poziomej linii  przez drugiego gracza - oczekiwana informacja o
+2. Ułożenie poziomej linii  przez drugiego gracza - oczekiwana informacja o
 jego wygranej.
-4. Ułożenie skośnej linii przez dowolnego gracza - oczekiwana informacja o
+3. Ułożenie skośnej linii przez dowolnego gracza - oczekiwana informacja o
 jego wygranej.
-5. Zapełnienie pola gry tak, że żaden gracz nie ułożył linii - oczekiwana informacja
+4. Zapełnienie pola gry tak, że żaden gracz nie ułożył linii - oczekiwana informacja
 o remisie.
-6. Próba ustawienia kamienia na wcześniej ustawiony kamień- brak możliwości wykonania takiego działania, zgłoszenie wyjątku.
 # Link
 https://github.com/MateuszKrasinski/Gomoku
