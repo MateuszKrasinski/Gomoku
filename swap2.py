@@ -51,9 +51,9 @@ class Swap2(game.Game):
             self.make_move(random_number[2][0], random_number[2][1])
             self.next_turn()
         else:
-            if self.player_on_move == self.player1:
+            if self.player_on_move == self.player1 and self.game_move_number == 0:
                 name = self.player1.name
-            elif self.player_on_move == self.player2:
+            elif self.player_on_move == self.player2 and self.game_move_number == 0:
                 name = self.player2.name
             else:
                 name = self.player1.name
@@ -88,13 +88,17 @@ class Swap2(game.Game):
                     if self.game_arbiter.evaluate() >= 0:
                         if self.player_on_move.stone_color == WHITE:
                             self.change_player()
+                            self.button_white_stone.hide()
                         else:
                             self.change = False
+                            self.button_white_stone.hide()
                     else:
                         if self.player_on_move.stone_color == WHITE:
                             self.change = False
+                            self.button_white_stone.hide()
                         else:
                             self.change_player()
+                            self.button_white_stone.hide()
 
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
@@ -103,15 +107,19 @@ class Swap2(game.Game):
                             self.gui_on_move.black(self.player1.name)
                             self.change_player()
                             self.change = False
+                            self.button_white_stone.hide()
                         else:
                             self.change = False
+                            self.button_white_stone.hide()
                     if self.button_black_stone.graphic.collidepoint(pos):
                         if self.player_on_move == self.player2:
                             self.change = False
+                            self.button_white_stone.hide()
                         else:
                             self.gui_on_move.white(self.player2.name)
                             self.change_player()
                             self.change = False
+                            self.button_white_stone.hide()
 
     def playgame(self):
         """Starts game on swap2 rules restart or back to menu depending of clicked button."""
@@ -121,7 +129,7 @@ class Swap2(game.Game):
                 self.game_opening()
             if self.player_on_move.name == AI and self.game_move_number >= 3:
                 self.ai_move()
-            if self.game_move_number == 3:
+            if self.game_move_number == 3 and self.change:
                 self.select_color()
             for event in pygame.event.get():
                 pygame.display.update()
@@ -147,5 +155,3 @@ class Swap2(game.Game):
                                         break
                                     self.next_turn()
                     pygame.display.update()
-
-

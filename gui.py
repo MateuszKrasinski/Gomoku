@@ -260,11 +260,11 @@ class ButtonChooseColor:
 
     def hide(self):
         """Methods covers all buttons after choosing colors during game in swap2 mode."""
-        pygame.draw.rect(SCREEN, Color.BOARD.value, (
-            0, self.left_down_corner_y - BORDER,
-            BOARD_WIDTH,
-            self.button_height + 2 * BORDER))
-        pygame.display.update()
+        pygame.draw.rect(SCREEN, Color.BOARD.value, (0, self.left_down_corner_y - BORDER,
+                                                     BOARD_WIDTH, self.button_height + 2 * BORDER))
+        for i in range(BOARD_SIZE):
+            message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
+                    (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
 
 
 class ButtonChooseOpponent():
