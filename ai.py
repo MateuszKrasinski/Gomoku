@@ -156,14 +156,14 @@ class AI:
                 score = self.mini_max(self.game_board, 1, MAX_DEPTH, False)
                 self.remove_neighbours_squares(i, j, 1)
                 self.game_board[i][j] = EMPTY
-                print("Dla board[{}][{}]  evaluation={}".format(i, j, score))
+                print("At board[{}][{}]  evaluation={}".format(i, j, score))
                 if score == BLACK_WIN:
                     best_move = i, j
                     break
                 if score > best_score:
                     best_score = score
                     best_move = i, j
-        print("Wykonano ruch na board[{}][{}] evaluation={}".format(best_move[0], best_move[1],
+        print("At board[{}][{}] evaluation={}".format(best_move[0], best_move[1],
                                                                     best_score))
         self.squares_with_neighbours_sorted[0].clear()
         return best_move

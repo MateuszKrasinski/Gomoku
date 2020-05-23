@@ -6,6 +6,7 @@ import check_board_state
 EMPTY = "_"
 BOARD_SIZE = 15
 WHITE = "white"
+BLACK = "black"
 
 
 class TestCheckBoardStateClass(unittest.TestCase):
@@ -18,11 +19,11 @@ class TestCheckBoardStateClass(unittest.TestCase):
     def test_check_rows(self):
         """Checking if method check_rows() returns True if put five consecutive stones in row."""
         self.setUp()
-        self.board[5][1] = WHITE
-        self.board[5][2] = WHITE
-        self.board[5][3] = WHITE
-        self.board[5][4] = WHITE
-        self.board[5][5] = WHITE
+        self.board[5][1] = BLACK
+        self.board[5][2] = BLACK
+        self.board[5][3] = BLACK
+        self.board[5][4] = BLACK
+        self.board[5][5] = BLACK
         result = check_board_state.CheckBoardState(self.board).check_rows()
         self.assertTrue(result, True)
 
