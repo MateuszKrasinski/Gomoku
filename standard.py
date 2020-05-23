@@ -6,7 +6,7 @@ import pygame
 import gui
 import game
 
-BOARDSIZE = 15
+BOARD_SIZE = 15
 
 
 class Standard(game.Game):
@@ -31,7 +31,6 @@ class Standard(game.Game):
             pygame.time.delay(100)
             if self.player_on_move.name == "AI":
                 self.ai_move()
-            # handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
@@ -42,8 +41,8 @@ class Standard(game.Game):
                     if self.button_new_game.graphic.collidepoint(pos):
                         return "Restart"
                     if self.game_running:
-                        for i in range(0, BOARDSIZE):
-                            for j in range(0, BOARDSIZE):
+                        for i in range(0, BOARD_SIZE):
+                            for j in range(0, BOARD_SIZE):
                                 if self.gui_board[i][j].graphic.collidepoint(
                                         pos) and self.game_board[i][j] == '_':
                                     if self.player_on_move.name != "AI":

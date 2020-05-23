@@ -191,7 +191,7 @@ class OnMove():
         pygame.display.update()
 
     def change_message(self, name):
-        """Method changes player name on turn."""
+        """Method changes player's name on turn."""
         pygame.draw.rect(SCREEN, Color.BOARD.value, (SCREEN_WIDTH - RIGHT_MARGIN,
                                                      SCREEN_HEIGHT // 3.5,
                                                      int(SQUARE_WIDTH * 1.7),

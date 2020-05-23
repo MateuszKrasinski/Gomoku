@@ -53,7 +53,7 @@ class Game:
         self.last_move = tuple()
 
     def menu(self):
-        """Setting up on scren menu where player can choose game options before start. """
+        """Setting up on screen menu where player can choose game options before start. """
         self.gui_on_move.white(self.player_on_move.name)
         self.button_white_stone.white(selected=True)
         self.button_black_stone.black()
@@ -150,4 +150,4 @@ class Game:
         self.last_move = i, j
 
     def playgame(self):
-        """Base function handling all game logic  chosen in menu mode"""
+        """Base function handling all game rules  chosen in menu mode"""

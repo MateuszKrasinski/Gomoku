@@ -9,7 +9,12 @@ GOOD_MOVE = 3000
 
 
 class CheckBoardState:
-    """Class has all attributes to find end of the game and count consecutive stones."""
+    """Class has all attributes to find end of the game and count consecutive stones.
+
+    During checking if on board are 5 consecutive stones (WIN) counting number of 2,3,4 stones
+    in one line. Good moves list contains all threatening square when 3 stones are consecutive
+    """
+
     def __init__(self, board):
         self.game_board = board
         self.good_moves = []
