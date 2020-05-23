@@ -2,6 +2,7 @@
 import math
 import time
 
+import globals
 import check_board_state
 
 WHITE_WIN = -1000000
@@ -10,10 +11,6 @@ MAX_MOVE_TIME = 6
 MAX_DEPTH = 5
 NUMBER_OF_CHECKED_SQUARES = 10
 NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX = 11
-BOARD_SIZE = 15
-WHITE = "white"
-BLACK = "black"
-EMPTY = "_"
 
 
 class AI:
@@ -58,19 +55,19 @@ class AI:
         if is_maximizing:
             best_score = -math.inf
             for i, j in min_max_set:
-                board[i][j] = BLACK
+                board[i][j] = globals.BLACK
                 score = self.mini_max(board, depth, depth, False, alpha, beta)
-                board[i][j] = EMPTY
+                board[i][j] = globals.EMPTY
                 evaluated_min_max_set.append((i, j, score))
             evaluated_min_max_set = sort_moves_by_evaluation(evaluated_min_max_set, True)
-            for square in evaluated_min_max_set[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
-                i, j = square[0], square[1]
-                board[i][j] = BLACK
+            for i, j, evaluation in evaluated_min_max_set[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX -
+                                                            depth)]:
+                board[i][j] = globals.BLACK
                 self.add_neighbours_squares(i, j, depth + 1, self.played_moves_in_game)
                 score = self.mini_max(board, depth + 1, MAX_DEPTH, False, alpha,
                                       beta)
                 self.remove_neighbours_squares(i, j, depth + 1)
-                board[i][j] = EMPTY
+                board[i][j] = globals.EMPTY
                 best_score = max(score, best_score)
                 alpha = max(alpha, best_score)
                 if beta <= alpha:
@@ -81,18 +78,18 @@ class AI:
 
         best_score = math.inf
         for i, j in min_max_set:
-            board[i][j] = WHITE
+            board[i][j] = globals.WHITE
             score = self.mini_max(board, depth, depth, True, alpha, beta)
-            board[i][j] = EMPTY
+            board[i][j] = globals.EMPTY
             evaluated_min_max_set.append((i, j, score))
         evaluated_min_max_set = sort_moves_by_evaluation(evaluated_min_max_set, False)
-        for square in evaluated_min_max_set[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX - depth)]:
-            i, j = square[0], square[1]
-            board[i][j] = WHITE
+        for i, j, evaluation in evaluated_min_max_set[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX -
+                                                        depth)]:
+            board[i][j] = globals.WHITE
             self.add_neighbours_squares(i, j, depth + 1, self.played_moves_in_game)
             score = self.mini_max(board, depth + 1, MAX_DEPTH, True, alpha, beta)
             self.remove_neighbours_squares(i, j, depth + 1)
-            board[i][j] = EMPTY
+            board[i][j] = globals.EMPTY
             best_score = min(score, best_score)
             beta = min(beta, best_score)
             if beta <= alpha:
@@ -112,20 +109,20 @@ class AI:
         if len(self.squares_with_neighbours[0]) == 0:
             self.squares_with_neighbours[0].add((7, 7))
         for i, j in self.squares_with_neighbours[0]:
-            if self.game_board[i][j] == EMPTY:
-                self.game_board[i][j] = BLACK
+            if self.game_board[i][j] == globals.EMPTY:
+                self.game_board[i][j] = globals.BLACK
                 score = self.mini_max(self.game_board, 0, 0, False, -math.inf,
                                       math.inf)
-                self.game_board[i][j] = EMPTY
+                self.game_board[i][j] = globals.EMPTY
                 self.squares_with_neighbours_sorted[0].add((i, j, score))
             if score == BLACK_WIN:
                 return i, j
         for i, j in self.squares_with_neighbours[0]:
-            if self.game_board[i][j] == EMPTY:
-                self.game_board[i][j] = WHITE
+            if self.game_board[i][j] == globals.EMPTY:
+                self.game_board[i][j] = globals.WHITE
                 score = self.mini_max(self.game_board, 1, 1, True, -math.inf,
                                       math.inf)
-                self.game_board[i][j] = EMPTY
+                self.game_board[i][j] = globals.EMPTY
                 if score == WHITE_WIN:
                     return i, j
         return False
@@ -150,12 +147,13 @@ class AI:
         print("All considered moves: ", self.threatening_squares + evaluated_min_max_set)
         evaluated_min_max_set = self.threatening_squares + evaluated_min_max_set
         for i, j, score in evaluated_min_max_set:
-            if self.game_board[i][j] == EMPTY and (time.time() - start_time < MAX_MOVE_TIME):
-                self.game_board[i][j] = BLACK
+            if self.game_board[i][j] == globals.EMPTY and (
+                    time.time() - start_time < MAX_MOVE_TIME):
+                self.game_board[i][j] = globals.BLACK
                 self.add_neighbours_squares(i, j, 1, self.played_moves_in_game)
                 score = self.mini_max(self.game_board, 1, MAX_DEPTH, False)
                 self.remove_neighbours_squares(i, j, 1)
-                self.game_board[i][j] = EMPTY
+                self.game_board[i][j] = globals.EMPTY
                 print("At board[{}][{}]  evaluation={}".format(i, j, score))
                 if score == BLACK_WIN:
                     best_move = i, j
@@ -164,7 +162,7 @@ class AI:
                     best_score = score
                     best_move = i, j
         print("At board[{}][{}] evaluation={}".format(best_move[0], best_move[1],
-                                                                    best_score))
+                                                      best_score))
         self.squares_with_neighbours_sorted[0].clear()
         return best_move
 
@@ -180,9 +178,9 @@ class AI:
             top = 0
         if j <= 0:
             left = 0
-        if j >= BOARD_SIZE - 1:
+        if j >= globals.BOARD_SIZE - 1:
             right = 0
-        if i >= BOARD_SIZE - 1:
+        if i >= globals.BOARD_SIZE - 1:
             down = 0
         neighbours = {(i - top, j + right), (i - top, j - left), (i - top, j),
                       (i, j - left), (i, j + right), (i + down, j + right),
@@ -201,7 +199,7 @@ class AI:
 
     def remove_neighbours_squares(self, i, j, depth):
         """Removing from set self.squares_with_neighbours squares added in mini_max."""
-        self.squares_with_neighbours[depth] = (self.squares_with_neighbours[depth - 1])
+        self.squares_with_neighbours[depth] = self.squares_with_neighbours[depth - 1]
         self.predicted_moves_in_mini_max.remove((i, j))
 
 

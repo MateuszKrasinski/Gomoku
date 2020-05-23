@@ -6,30 +6,30 @@ import pygame
 import game
 import standard
 import swap2
+import globals
 
-RESTART = "Restart"
-MENU = "Menu"
-SWAP2 = "swap2"
-STANDARD = "standard"
-GameSettings = collections.namedtuple("GameSettings", "player1,player2 game_mode")
-while True:
+game_settings = collections.namedtuple("game_settings", "player1,player2 game_mode")
 
-    gra = game.Game()
-    GameSettings = gra.menu()
-    if GameSettings:
-        if GameSettings[3] == STANDARD:
-            while True:
-                if standard.Standard(GameSettings[0], GameSettings[1],
-                                     GameSettings[2]).playgame() == RESTART:
-                    continue
-                break
-        elif GameSettings[3] == SWAP2:
-            while True:
-                if swap2.Swap2(GameSettings[0], GameSettings[1],
-                               GameSettings[2]).playgame() == RESTART:
-                    continue
-                break
 
-    pygame.display.update()
+def main():
+    while True:
+
+        gra = game.Game()
+        game_settings = gra.menu()
+        if game_settings:
+            if game_settings[3] == globals.STANDARD:
+                while True:
+                    if not standard.Standard(game_settings[0], game_settings[1],
+                                             game_settings[2]).playgame() == globals.RESTART:
+                        break
+            elif game_settings[3] == globals.SWAP2:
+                while True:
+                    if not swap2.Swap2(game_settings[0], game_settings[1],
+                                       game_settings[2]).playgame() == globals.RESTART:
+                        break
+
+        pygame.display.update()
+
+
 if __name__ == '__main__':
     main()

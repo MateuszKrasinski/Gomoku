@@ -7,11 +7,8 @@ import pygame
 import gui
 from check_board_state import CheckBoardState
 from ai import AI
+import globals
 
-BOARDSIZE = 15
-EMPTY = "_"
-WHITE = "white"
-BLACK = "black"
 PLAYER1_NAME = "Gracz1"
 PLAYER2_NAME = "Gracz2"
 
@@ -23,6 +20,12 @@ class Player:
     stone_color: str
 
 
+class Player:
+    def __init__(self, name, stone_color):
+        self.name = name
+        self.stone_color = stone_color
+
+
 class Game:
     """Class set up all need operations and attributes to play game."""
 
@@ -32,15 +35,17 @@ class Game:
         gui.draw_background()
         self.game_running = True
         self.game_move_number = 0
-        self.game_board = [[EMPTY for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
+        self.game_board = [[globals.EMPTY for i in range(globals.BOARD_SIZE)] for j in range(
+            globals.BOARD_SIZE)]
         self.game_arbiter = CheckBoardState(self.game_board)
         self.ai = AI(self.game_board)
         self.played_moves = set()
-        self.player1 = Player(PLAYER1_NAME, WHITE)
-        self.player2 = Player("AI", BLACK)
+        self.player1 = Player(PLAYER1_NAME, globals.WHITE)
+        self.player2 = Player("AI", globals.BLACK)
         self.player_on_move = self.player1
         self.game_mode = "standard"
-        self.gui_board = [[gui.Square() for i in range(BOARDSIZE)] for j in range(BOARDSIZE)]
+        self.gui_board = [[gui.Square() for i in range(globals.BOARD_SIZE)] for j in range(
+            globals.BOARD_SIZE)]
         self.gui_on_move = gui.OnMove()
         self.button_new_game = gui.ButtonRightMenu(0, "New Game")
         self.button_menu = gui.ButtonRightMenu(1, "Menu")
@@ -105,7 +110,7 @@ class Game:
 
     def ai_move(self):
         """Playing the best found movie in AI module using mini max alghoritm."""
-        if self.player_on_move.stone_color == "black":
+        if self.player_on_move.stone_color == globals.BLACK:
             best_move = self.ai.play_best(self.played_moves)
         else:
             best_move = self.ai.play_best(self.played_moves, black_color=False)
@@ -119,31 +124,31 @@ class Game:
         """Method changes player on move and all GUI about it."""
         if self.player_on_move == self.player1:
             self.player_on_move = self.player2
-            if self.player_on_move.stone_color == WHITE:
+            if self.player_on_move.stone_color == globals.WHITE:
                 self.gui_on_move.white(self.player_on_move.name)
             else:
                 self.gui_on_move.black(self.player_on_move.name)
         elif self.player_on_move == self.player2:
             self.player_on_move = self.player1
-            if self.player_on_move.stone_color == WHITE:
+            if self.player_on_move.stone_color == globals.WHITE:
                 self.gui_on_move.white(self.player_on_move.name)
             else:
                 self.gui_on_move.black(self.player_on_move.name)
 
     def make_move(self, i, j):
         """Making move on given i,j from ai_move or selected by user."""
-        if self.player_on_move.stone_color == WHITE:
+        if self.player_on_move.stone_color == globals.WHITE:
             if self.game_move_number > 0:
                 self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
                 self.gui_board[i][j].draw_black_stone(self.last_move[0], self.last_move[1])
             self.gui_board[i][j].draw_white_stone(i, j, True)
-            self.game_board[i][j] = WHITE
+            self.game_board[i][j] = globals.WHITE
         else:
             if self.game_move_number > 0:
                 self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
                 self.gui_board[i][j].draw_white_stone(self.last_move[0], self.last_move[1])
             self.gui_board[i][j].draw_black_stone(i, j, True)
-            self.game_board[i][j] = BLACK
+            self.game_board[i][j] = globals.BLACK
         self.game_move_number += 1
         self.played_moves.add((i, j))
         self.ai.add_neighbours_squares(i, j, 0, self.played_moves)

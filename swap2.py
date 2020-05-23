@@ -6,14 +6,9 @@ import pygame
 
 import gui
 import game
+import globals
 
-BOARDSIZE = 15
-MENU = "Menu"
-RESTART = "Restart"
-EMPTY = "_"
-AI = "AI"
-WHITE = "white"
-BLACK = "BLACK"
+
 
 
 class Swap2(game.Game):
@@ -26,18 +21,21 @@ class Swap2(game.Game):
         self.player2 = player2
         self.player_on_move = on_move
         self.change = True
-        if self.player_on_move.stone_color == WHITE:
+        if self.player_on_move.stone_color == globals.WHITE:
             self.gui_on_move.white(self.player_on_move.name)
         else:
             self.gui_on_move.black(self.player_on_move.name)
 
     def game_opening(self):
         """Method allows starting player to put 3 stones before selecting colors"""
-        if self.game_move_number == 0 and self.player_on_move.name == AI:
+        if self.game_move_number == 0 and self.player_on_move.name == globals.AI:
             random_number = []
             counter = 0
             while counter < 3:
-                number = (random.randint(6, 8), random.randint(6, 8))
+                number = (random.randint((globals.BOARD_SIZE - 1) // 2 - 1,
+                                         (globals.BOARD_SIZE - 1) // 2 + 1),
+                          random.randint((globals.BOARD_SIZE - 1) // 2 - 1,
+                                         (globals.BOARD_SIZE - 1) // 2 + 1))
                 if number not in random_number:
                     random_number.append(number)
                     counter += 1
@@ -62,12 +60,12 @@ class Swap2(game.Game):
     def change_player(self):
         """Method allows to change player's stone color according to swap2 rules."""
         if self.player_on_move == self.player2:
-            self.player1.stone_color = BLACK
-            self.player2.stone_color = WHITE
+            self.player1.stone_color = globals.BLACK
+            self.player2.stone_color = globals.WHITE
             self.player_on_move = self.player1
         else:
-            self.player1.stone_color = BLACK
-            self.player2.stone_color = WHITE
+            self.player1.stone_color = globals.BLACK
+            self.player2.stone_color = globals.WHITE
             self.player_on_move = self.player2
 
     def choose_color(self):
@@ -83,17 +81,17 @@ class Swap2(game.Game):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)
-                if self.player_on_move.name == AI:
+                if self.player_on_move.name == globals.AI:
                     self.game_arbiter.check_board_state(self.player_on_move.name)
                     if self.game_arbiter.evaluate() >= 0:
-                        if self.player_on_move.stone_color == WHITE:
+                        if self.player_on_move.stone_color == globals.WHITE:
                             self.change_player()
                             self.button_white_stone.hide()
                         else:
                             self.change = False
                             self.button_white_stone.hide()
                     else:
-                        if self.player_on_move.stone_color == WHITE:
+                        if self.player_on_move.stone_color == globals.WHITE:
                             self.change = False
                             self.button_white_stone.hide()
                         else:
@@ -127,7 +125,7 @@ class Swap2(game.Game):
         while True:
             if self.game_move_number < 3:
                 self.game_opening()
-            if self.player_on_move.name == AI and self.game_move_number >= 3:
+            if self.player_on_move.name == globals.AI and self.game_move_number >= 3:
                 self.ai_move()
             if self.game_move_number == 3 and self.change:
                 self.select_color()
@@ -138,14 +136,14 @@ class Swap2(game.Game):
                 if event.type == pygame.MOUSEBUTTONUP:
                     pos = pygame.mouse.get_pos()
                     if self.button_menu.graphic.collidepoint(pos):
-                        return MENU
+                        return globals.MENU
                     if self.button_new_game.graphic.collidepoint(pos):
-                        return RESTART
+                        return globals.RESTART
                     if self.game_running:
-                        for i in range(0, BOARDSIZE):
-                            for j in range(0, BOARDSIZE):
+                        for i in range(0, globals.BOARD_SIZE):
+                            for j in range(0, globals.BOARD_SIZE):
                                 if self.gui_board[i][j].graphic.collidepoint(
-                                        pos) and self.game_board[i][j] == EMPTY:
+                                        pos) and self.game_board[i][j] == globals.EMPTY:
                                     if self.player_on_move.name:
                                         self.make_move(i, j)
                                         pygame.display.update()
