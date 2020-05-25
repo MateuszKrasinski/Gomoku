@@ -3,6 +3,8 @@ from enum import Enum
 
 import pygame
 
+import constants
+
 
 class Color(Enum):
     """Enum with colors used in this module"""
@@ -18,16 +20,16 @@ BIG_FONT_SIZE = 40
 FONT_SIZE = 14
 SETTINGS_TOP_MARGIN = 10
 BORDER = 2
-BOARD_SIZE = 15
+constants.BOARD_SIZE = 15
 SQUARE_WIDTH = 30
 STONE_RADIUS = SQUARE_WIDTH // 2
 SQUARE_MARGIN = 2
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 545
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-BOARD_WIDTH = int(BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN) + 2 * SQUARE_MARGIN)
-LEFT_MARGIN = int(SCREEN_WIDTH - (BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN))) // 4
-TOP_MARGIN = int(SCREEN_HEIGHT - BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN)) // 2
+BOARD_WIDTH = int(constants.BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN) + 2 * SQUARE_MARGIN)
+LEFT_MARGIN = int(SCREEN_WIDTH - (constants.BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN))) // 4
+TOP_MARGIN = int(SCREEN_HEIGHT - constants.BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN)) // 2
 RIGHT_MARGIN = int(SCREEN_WIDTH - BOARD_WIDTH - LEFT_MARGIN)
 SETTINGS_MESSAGE_TOP_MARGIN = TOP_MARGIN - 5
 BUTTON_CHOOSE_MODE_WIDTH = 70
@@ -143,13 +145,13 @@ class Square:
 
 def draw_board(square):
     """Functions draws on the middle-screen empty board"""
-    for i in range(0, BOARD_SIZE):
-        for j in range(0, BOARD_SIZE):
+    for i in range(0, constants.BOARD_SIZE):
+        for j in range(0, constants.BOARD_SIZE):
             square[i][j].draw_empty_square(i, j)
         message("{}".format(i + 1), LEFT_MARGIN - SQUARE_WIDTH // 3 - BORDER, TOP_MARGIN +
                 SQUARE_WIDTH // 2 + i * (SQUARE_WIDTH + SQUARE_MARGIN) + SQUARE_WIDTH // 2,
                 FONT_SIZE)
-    for i in range(BOARD_SIZE):
+    for i in range(constants.BOARD_SIZE):
         message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
                 (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
     pygame.display.update()
@@ -262,7 +264,7 @@ class ButtonChooseColor:
         """Methods covers all buttons after choosing colors during game in swap2 mode."""
         pygame.draw.rect(SCREEN, Color.BOARD.value, (0, self.left_down_corner_y - BORDER,
                                                      BOARD_WIDTH, self.button_height + 2 * BORDER))
-        for i in range(BOARD_SIZE):
+        for i in range(constants.BOARD_SIZE):
             message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
                     (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
 
