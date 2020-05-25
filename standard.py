@@ -7,12 +7,6 @@ import gui
 import game
 import constants
 
-BOARD_SIZE = 15
-WHITE = "white"
-BLACK = "black"
-EMPTY = "_"
-AI = "AI"
-
 
 class Standard(game.Game):
     """Class contains all methods and attributes to play game on standard rules."""
@@ -23,7 +17,7 @@ class Standard(game.Game):
         self.player1 = player1
         self.player2 = player2
         self.player_on_move = on_move
-        if self.player_on_move.stone_color == WHITE:
+        if self.player_on_move.stone_color == constants.WHITE:
             self.gui_on_move.white(self.player_on_move.name)
         else:
             self.gui_on_move.black(self.player_on_move.name)
@@ -34,7 +28,7 @@ class Standard(game.Game):
         while True:
             pygame.display.update()
             pygame.time.delay(100)
-            if self.player_on_move.name == AI:
+            if self.player_on_move.name == constants.AI:
                 self.ai_move()
             else:
                 for event in pygame.event.get():
