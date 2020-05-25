@@ -7,7 +7,7 @@ import pygame
 import gui
 from check_board_state import CheckBoardState
 import players
-import globals
+import constants
 
 PLAYER1_NAME = "Gracz1"
 PLAYER2_NAME = "Gracz2"
@@ -22,16 +22,16 @@ class Game:
         gui.draw_background()
         self.game_running = True
         self.game_move_number = 0
-        self.game_board = [[globals.EMPTY for i in range(globals.BOARD_SIZE)] for j in range(
-            globals.BOARD_SIZE)]
+        self.game_board = [[constants.EMPTY for i in range(constants.BOARD_SIZE)] for j in range(
+            constants.BOARD_SIZE)]
         self.game_arbiter = CheckBoardState(self.game_board)
         self.played_moves = []
-        self.player1 = players.HumanPlayer(PLAYER1_NAME, globals.WHITE)
-        self.player2 = players.AiPlayer(globals.BLACK)
+        self.player1 = players.HumanPlayer(PLAYER1_NAME, constants.WHITE)
+        self.player2 = players.AiPlayer(self.game_board, constants.BLACK)
         self.player_on_move = self.player1
         self.game_mode = "standard"
-        self.gui_board = [[gui.Square() for i in range(globals.BOARD_SIZE)] for j in range(
-            globals.BOARD_SIZE)]
+        self.gui_board = [[gui.Square() for i in range(constants.BOARD_SIZE)] for j in range(
+            constants.BOARD_SIZE)]
         self.gui_on_move = gui.OnMove()
         self.button_new_game = gui.ButtonRightMenu(0, "New Game")
         self.button_menu = gui.ButtonRightMenu(1, "Menu")
@@ -73,7 +73,7 @@ class Game:
                         self.button_black_stone.black(selected=True)
                         self.player_on_move = self.player2
                     if self.button_ai_opponent.graphic.collidepoint(pos):
-                        self.player2 = players.AiPlayer(self.player2.stone_color)
+                        self.player2 = players.AiPlayer(self.game_board, self.player2.stone_color)
                         if self.player_on_move == self.player2:
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=True)
@@ -96,9 +96,8 @@ class Game:
 
     def ai_move(self):
         """Playing the best found movie in AI module using mini max alghoritm."""
-        if self.player_on_move.stone_color == globals.BLACK:
+        if self.player_on_move.stone_color == constants.BLACK:
             best_move = self.player_on_move.make_move(self.game_board, self.played_moves)
-            print("Best move: ", )
         else:
             best_move = self.player_on_move.make_move(self.game_board, self.played_moves, False)
         self.make_move(best_move[0], best_move[1])
@@ -111,31 +110,31 @@ class Game:
         """Method changes player on move and all GUI about it."""
         if self.player_on_move == self.player1:
             self.player_on_move = self.player2
-            if self.player_on_move.stone_color == globals.WHITE:
+            if self.player_on_move.stone_color == constants.WHITE:
                 self.gui_on_move.white(self.player_on_move.name)
             else:
                 self.gui_on_move.black(self.player_on_move.name)
         elif self.player_on_move == self.player2:
             self.player_on_move = self.player1
-            if self.player_on_move.stone_color == globals.WHITE:
+            if self.player_on_move.stone_color == constants.WHITE:
                 self.gui_on_move.white(self.player_on_move.name)
             else:
                 self.gui_on_move.black(self.player_on_move.name)
 
     def make_move(self, i, j):
         """Making move on given i,j from ai_move or selected by user."""
-        if self.player_on_move.stone_color == globals.WHITE:
+        if self.player_on_move.stone_color == constants.WHITE:
             if self.game_move_number > 0:
                 self.gui_board[i][j].draw_empty_square(self.LastMove[0], self.LastMove[1])
                 self.gui_board[i][j].draw_black_stone(self.LastMove[0], self.LastMove[1])
             self.gui_board[i][j].draw_white_stone(i, j, True)
-            self.game_board[i][j] = globals.WHITE
+            self.game_board[i][j] = constants.WHITE
         else:
             if self.game_move_number > 0:
                 self.gui_board[i][j].draw_empty_square(self.LastMove[0], self.LastMove[1])
                 self.gui_board[i][j].draw_white_stone(self.LastMove[0], self.LastMove[1])
             self.gui_board[i][j].draw_black_stone(i, j, True)
-            self.game_board[i][j] = globals.BLACK
+            self.game_board[i][j] = constants.BLACK
         self.game_move_number += 1
         self.played_moves.append((i, j))
         self.LastMove = i, j

@@ -5,6 +5,7 @@ import pygame
 
 import gui
 import game
+import constants
 
 BOARD_SIZE = 15
 WHITE = "white"
@@ -42,19 +43,17 @@ class Standard(game.Game):
                     if event.type == pygame.MOUSEBUTTONUP:
                         pos = pygame.mouse.get_pos()
                         if self.button_menu.graphic.collidepoint(pos):
-                            return "Menu"
+                            return constants.MENU
                         if self.button_new_game.graphic.collidepoint(pos):
-                            return "Restart"
-                        if self.game_running:
-                            if self.player_on_move.make_move(pos, self.gui_board,
-                                                             self.game_board):
-                                i, j = self.player_on_move.make_move(pos, self.gui_board,
-                                                                     self.game_board)
-                                self.make_move(i, j)
-                                pygame.display.update()
-                                if self.game_arbiter.check_board_state(
-                                        self.player_on_move.name):
-                                    self.game_running = False
-                                    break
-                                self.next_turn()
+                            return constants.RESTART
+                        if self.game_running and self.player_on_move.make_move(pos,
+                                                                               self.gui_board,
+                                                                               self.game_board):
+                            i, j = self.player_on_move.make_move(pos, self.gui_board,
+                                                                 self.game_board)
+                            self.make_move(i, j)
+                            if self.game_arbiter.check_board_state(self.player_on_move.name):
+                                self.game_running = False
+                                break
+                            self.next_turn()
                     pygame.display.update()
