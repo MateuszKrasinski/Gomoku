@@ -177,7 +177,7 @@ class OnMove():
                 self.graphic_stone.center[1], FONT_SIZE)
         self.graphic = pygame.draw.circle(SCREEN, Color.BLACK.value, (
             int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - BORDER,
-            int(self.graphic_stone.midright[1]) - BORDER), SQUARE_WIDTH // 2.5)
+            int(self.graphic_stone.midright[1]) - BORDER), int(SQUARE_WIDTH // 2.5))
         pygame.display.update()
 
     def white(self, name):
@@ -187,7 +187,7 @@ class OnMove():
                 self.graphic_stone.center[1], FONT_SIZE)
         self.graphic = pygame.draw.circle(SCREEN, Color.WHITE.value, (
             int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - BORDER,
-            int(self.graphic_stone.midright[1] - BORDER)), SQUARE_WIDTH // 2.5)
+            int(self.graphic_stone.midright[1] - BORDER)), int(SQUARE_WIDTH // 2.5))
         pygame.display.update()
 
     def change_message(self, name):

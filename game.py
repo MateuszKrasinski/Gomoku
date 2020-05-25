@@ -6,41 +6,11 @@ import pygame
 
 import gui
 from check_board_state import CheckBoardState
-from ai import AI
+import players
 import globals
 
 PLAYER1_NAME = "Gracz1"
 PLAYER2_NAME = "Gracz2"
-
-
-class BasePlayer:
-    def __init__(self, name, stone_color):
-        self.name = name
-        self.stone_color = stone_color
-
-    def make_move(self):
-        pass
-
-
-class HumanPlayer(BasePlayer):
-    def __init__(self, name, stone_color):
-        super(HumanPlayer, self).__init__(name, stone_color)
-
-    def make_move(self, pos, gui_board, game_board):
-        for i in range(0, globals.BOARD_SIZE):
-            for j in range(0, globals.BOARD_SIZE):
-                if gui_board[i][j].graphic.collidepoint(
-                        pos) and game_board[i][j] == globals.EMPTY:
-                    return i, j
-        pygame.display.update()
-
-
-class AiPlayer(BasePlayer):
-    def __init__(self, stone_color, name="AI"):
-        super(AiPlayer, self).__init__(name, stone_color)
-
-    def make_move(self, game_board, played_moves):
-        return AI(game_board, played_moves).play_best()
 
 
 class Game:
@@ -56,8 +26,8 @@ class Game:
             globals.BOARD_SIZE)]
         self.game_arbiter = CheckBoardState(self.game_board)
         self.played_moves = []
-        self.player1 = HumanPlayer(PLAYER1_NAME, globals.WHITE)
-        self.player2 = AiPlayer(globals.BLACK, "AI", )
+        self.player1 = players.HumanPlayer(PLAYER1_NAME, globals.WHITE)
+        self.player2 = players.AiPlayer(globals.BLACK)
         self.player_on_move = self.player1
         self.game_mode = "standard"
         self.gui_board = [[gui.Square() for i in range(globals.BOARD_SIZE)] for j in range(
@@ -103,13 +73,13 @@ class Game:
                         self.button_black_stone.black(selected=True)
                         self.player_on_move = self.player2
                     if self.button_ai_opponent.graphic.collidepoint(pos):
-                        self.player2 = AiPlayer(self.player2.stone_color)
+                        self.player2 = players.AiPlayer(self.player2.stone_color)
                         if self.player_on_move == self.player2:
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=True)
                         self.button_ai_player.player(selected=False)
                     if self.button_ai_player.graphic.collidepoint(pos):
-                        self.player2 = HumanPlayer("Gracz2", self.player2.stone_color)
+                        self.player2 = players.HumanPlayer("Gracz2", self.player2.stone_color)
                         if self.player_on_move == self.player2:
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=False)
@@ -130,7 +100,7 @@ class Game:
             best_move = self.player_on_move.make_move(self.game_board, self.played_moves)
             print("Best move: ", )
         else:
-            best_move = self.player_on_move.make_move(self.game_board, self.played_moves)
+            best_move = self.player_on_move.make_move(self.game_board, self.played_moves, False)
         self.make_move(best_move[0], best_move[1])
         if self.game_arbiter.check_board_state(self.player_on_move.name):
             self.game_running = False
@@ -168,7 +138,6 @@ class Game:
             self.game_board[i][j] = globals.BLACK
         self.game_move_number += 1
         self.played_moves.append((i, j))
-        # self.player2.ai.add_neighbours_squares(i, j, 0, self.played_moves)
         self.LastMove = i, j
 
     def playgame(self):
