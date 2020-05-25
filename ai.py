@@ -1,13 +1,15 @@
 """Module contains AI class which ensure artificial intelligence working correctly"""
 import math
 import time
+import operator
+import collections
 
 import globals
 import check_board_state
 
 WHITE_WIN = -1000000
 BLACK_WIN = 1000000
-MAX_MOVE_TIME = 6
+MAX_MOVE_TIME_SECONDS = 6
 MAX_DEPTH = 5
 NUMBER_OF_CHECKED_SQUARES = 10
 NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX = 11
@@ -16,7 +18,7 @@ NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX = 11
 class AI:
     """Class contains all needed attributes and methods to create artificial intelligence object"""
 
-    def __init__(self, board):
+    def __init__(self, board, played_moves):
         """Init with board from game module and all needed attributes to make ai optimal.
         Attributes:
         arbiter:   Class which allows to check if game is finished
@@ -33,7 +35,7 @@ class AI:
         self.squares_with_neighbours = [set() for i in range(MAX_DEPTH + 1)]
         self.squares_with_neighbours_sorted = [set() for i in range(MAX_DEPTH + 1)]
         self.predicted_moves_in_mini_max = set()
-        self.played_moves_in_game = set()
+        self.played_moves_in_game = played_moves
         self.threatening_squares = []
 
     def mini_max(self, board, depth, max_depth, is_maximizing, alpha=-math.inf, beta=math.inf):
@@ -127,9 +129,13 @@ class AI:
                     return i, j
         return False
 
-    def play_best(self, played_moves, black_color=True):
+    def play_best(self, black_color=True):
+        print(self.played_moves_in_game)
+        for i, j in self.played_moves_in_game:
+            self.add_neighbours_squares(i, j, 0, self.played_moves_in_game)
+        for line in self.game_board:
+            print(line)
         """Method returns best move as tuple (i,j), first using forced_move() else mini_max()."""
-        self.played_moves_in_game = played_moves
         best_score = -math.inf
         if self.forced_move() is not False:
             i, j = self.forced_move()
@@ -148,7 +154,7 @@ class AI:
         evaluated_min_max_set = self.threatening_squares + evaluated_min_max_set
         for i, j, score in evaluated_min_max_set:
             if self.game_board[i][j] == globals.EMPTY and (
-                    time.time() - start_time < MAX_MOVE_TIME):
+                    time.time() - start_time < MAX_MOVE_TIME_SECONDS):
                 self.game_board[i][j] = globals.BLACK
                 self.add_neighbours_squares(i, j, 1, self.played_moves_in_game)
                 score = self.mini_max(self.game_board, 1, MAX_DEPTH, False)
@@ -172,7 +178,6 @@ class AI:
         Firstly union neighbours set and squares_with_neighbours after it checking if in this set
         squares was played or predicted in mini_max algorithm and removing this moves.
         """
-
         down, top, left, right = 1, 1, 1, 1
         if i <= 0:
             top = 0
@@ -205,4 +210,4 @@ class AI:
 
 def sort_moves_by_evaluation(sub_li, is_maximazing):
     """Sort moves by evaluation from mini_max algorithm."""
-    return sorted(sub_li, key=lambda x: x[2], reverse=is_maximazing)
+    return sorted(sub_li, key=operator.itemgetter(2), reverse=is_maximazing)

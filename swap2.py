@@ -9,8 +9,6 @@ import game
 import globals
 
 
-
-
 class Swap2(game.Game):
     """Class contains all methods and attributes to play game on standard rules."""
 

@@ -1,6 +1,6 @@
 """Module contains class Player and Game which allows to create base of the game"""
 import sys
-from dataclasses import dataclass
+import collections
 
 import pygame
 
@@ -13,17 +13,34 @@ PLAYER1_NAME = "Gracz1"
 PLAYER2_NAME = "Gracz2"
 
 
-@dataclass
-class Player:
-    """Class creating player object with attributes name, stone_color"""
-    name: str
-    stone_color: str
-
-
-class Player:
+class BasePlayer:
     def __init__(self, name, stone_color):
         self.name = name
         self.stone_color = stone_color
+
+    def make_move(self):
+        pass
+
+
+class HumanPlayer(BasePlayer):
+    def __init__(self, name, stone_color):
+        super(HumanPlayer, self).__init__(name, stone_color)
+
+    def make_move(self, pos, gui_board, game_board):
+        for i in range(0, globals.BOARD_SIZE):
+            for j in range(0, globals.BOARD_SIZE):
+                if gui_board[i][j].graphic.collidepoint(
+                        pos) and game_board[i][j] == globals.EMPTY:
+                    return i, j
+        pygame.display.update()
+
+
+class AiPlayer(BasePlayer):
+    def __init__(self, stone_color, name="AI"):
+        super(AiPlayer, self).__init__(name, stone_color)
+
+    def make_move(self, game_board, played_moves):
+        return AI(game_board, played_moves).play_best()
 
 
 class Game:
@@ -38,10 +55,9 @@ class Game:
         self.game_board = [[globals.EMPTY for i in range(globals.BOARD_SIZE)] for j in range(
             globals.BOARD_SIZE)]
         self.game_arbiter = CheckBoardState(self.game_board)
-        self.ai = AI(self.game_board)
-        self.played_moves = set()
-        self.player1 = Player(PLAYER1_NAME, globals.WHITE)
-        self.player2 = Player("AI", globals.BLACK)
+        self.played_moves = []
+        self.player1 = HumanPlayer(PLAYER1_NAME, globals.WHITE)
+        self.player2 = AiPlayer(globals.BLACK, "AI", )
         self.player_on_move = self.player1
         self.game_mode = "standard"
         self.gui_board = [[gui.Square() for i in range(globals.BOARD_SIZE)] for j in range(
@@ -55,7 +71,7 @@ class Game:
         self.button_ai_player = gui.ButtonChooseOpponent(1)
         self.button_standard_game_mode = gui.ButtonChooseMode(0)
         self.button_swap2_game_mode = gui.ButtonChooseMode(1)
-        self.last_move = tuple()
+        self.LastMove = collections.namedtuple("LastMove", "i j")
 
     def menu(self):
         """Setting up on screen menu where player can choose game options before start. """
@@ -87,13 +103,13 @@ class Game:
                         self.button_black_stone.black(selected=True)
                         self.player_on_move = self.player2
                     if self.button_ai_opponent.graphic.collidepoint(pos):
-                        self.player2.name = "AI"
+                        self.player2 = AiPlayer(self.player2.stone_color)
                         if self.player_on_move == self.player2:
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=True)
                         self.button_ai_player.player(selected=False)
                     if self.button_ai_player.graphic.collidepoint(pos):
-                        self.player2.name = PLAYER2_NAME
+                        self.player2 = HumanPlayer("Gracz2", self.player2.stone_color)
                         if self.player_on_move == self.player2:
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=False)
@@ -111,9 +127,10 @@ class Game:
     def ai_move(self):
         """Playing the best found movie in AI module using mini max alghoritm."""
         if self.player_on_move.stone_color == globals.BLACK:
-            best_move = self.ai.play_best(self.played_moves)
+            best_move = self.player_on_move.make_move(self.game_board, self.played_moves)
+            print("Best move: ", )
         else:
-            best_move = self.ai.play_best(self.played_moves, black_color=False)
+            best_move = self.player_on_move.make_move(self.game_board, self.played_moves)
         self.make_move(best_move[0], best_move[1])
         if self.game_arbiter.check_board_state(self.player_on_move.name):
             self.game_running = False
@@ -139,20 +156,20 @@ class Game:
         """Making move on given i,j from ai_move or selected by user."""
         if self.player_on_move.stone_color == globals.WHITE:
             if self.game_move_number > 0:
-                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
-                self.gui_board[i][j].draw_black_stone(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_empty_square(self.LastMove[0], self.LastMove[1])
+                self.gui_board[i][j].draw_black_stone(self.LastMove[0], self.LastMove[1])
             self.gui_board[i][j].draw_white_stone(i, j, True)
             self.game_board[i][j] = globals.WHITE
         else:
             if self.game_move_number > 0:
-                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
-                self.gui_board[i][j].draw_white_stone(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_empty_square(self.LastMove[0], self.LastMove[1])
+                self.gui_board[i][j].draw_white_stone(self.LastMove[0], self.LastMove[1])
             self.gui_board[i][j].draw_black_stone(i, j, True)
             self.game_board[i][j] = globals.BLACK
         self.game_move_number += 1
-        self.played_moves.add((i, j))
-        self.ai.add_neighbours_squares(i, j, 0, self.played_moves)
-        self.last_move = i, j
+        self.played_moves.append((i, j))
+        # self.player2.ai.add_neighbours_squares(i, j, 0, self.played_moves)
+        self.LastMove = i, j
 
     def playgame(self):
         """Base function handling all game rules  chosen in menu mode"""

@@ -7,3 +7,4 @@ MENU = "Menu"
 RESTART = "Restart"
 SWAP2 = "swap2"
 STANDARD = "standard"
+#const

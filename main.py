@@ -8,7 +8,7 @@ import standard
 import swap2
 import globals
 
-game_settings = collections.namedtuple("game_settings", "player1,player2 game_mode")
+GameSettings = collections.namedtuple("GameSettings", "player1 player2 game_mode")
 
 
 def main():
