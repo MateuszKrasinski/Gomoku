@@ -5,7 +5,7 @@ import collections
 import pygame
 
 import gui
-from check_board_state import CheckBoardState
+import check_board_state
 import players
 import constants
 
@@ -24,7 +24,7 @@ class Game:
         self.game_move_number = 0
         self.game_board = [[constants.EMPTY for i in range(constants.BOARD_SIZE)] for j in range(
             constants.BOARD_SIZE)]
-        self.game_arbiter = CheckBoardState(self.game_board)
+        self.game_arbiter = check_board_state.CheckBoardState(self.game_board)
         self.played_moves = []
         self.player1 = players.HumanPlayer(PLAYER1_NAME, constants.WHITE)
         self.player2 = players.AiPlayer(self.game_board, constants.BLACK)

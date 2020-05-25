@@ -193,8 +193,8 @@ class AiPlayer(BasePlayer):
                 if score > best_score:
                     best_score = score
                     best_move = i, j
-        print("At board[{}][{}] evaluation={}".format(best_move[0], best_move[1],
-                                                      best_score))
+        print("Played move on  board[{}][{}] evaluation={}".format(best_move[0], best_move[1],
+                                                                   best_score))
         self.squares_with_neighbours_sorted[0].clear()
         return best_move
 
