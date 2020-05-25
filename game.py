@@ -9,9 +9,6 @@ import check_board_state
 import players
 import constants
 
-PLAYER1_NAME = "Gracz1"
-PLAYER2_NAME = "Gracz2"
-
 
 class Game:
     """Class set up all need operations and attributes to play game."""
@@ -26,15 +23,15 @@ class Game:
             constants.BOARD_SIZE)]
         self.game_arbiter = check_board_state.CheckBoardState(self.game_board)
         self.played_moves = []
-        self.player1 = players.HumanPlayer(PLAYER1_NAME, constants.WHITE)
+        self.player1 = players.HumanPlayer(constants.PLAYER1_NAME, constants.WHITE)
         self.player2 = players.AiPlayer(self.game_board, constants.BLACK)
         self.player_on_move = self.player1
-        self.game_mode = "standard"
+        self.game_mode = constants.STANDARD
         self.gui_board = [[gui.Square() for i in range(constants.BOARD_SIZE)] for j in range(
             constants.BOARD_SIZE)]
         self.gui_on_move = gui.OnMove()
-        self.button_new_game = gui.ButtonRightMenu(0, "New Game")
-        self.button_menu = gui.ButtonRightMenu(1, "Menu")
+        self.button_new_game = gui.ButtonRightMenu(0, constants.RESTART)
+        self.button_menu = gui.ButtonRightMenu(1, constants.MENU)
         self.button_white_stone = gui.ButtonChooseColor(0)
         self.button_black_stone = gui.ButtonChooseColor(1)
         self.button_ai_opponent = gui.ButtonChooseOpponent(0)
@@ -79,17 +76,18 @@ class Game:
                         self.button_ai_opponent.AI(selected=True)
                         self.button_ai_player.player(selected=False)
                     if self.button_ai_player.graphic.collidepoint(pos):
-                        self.player2 = players.HumanPlayer("Gracz2", self.player2.stone_color)
+                        self.player2 = players.HumanPlayer(constants.PLAYER2_NAME,
+                                                           self.player2.stone_color)
                         if self.player_on_move == self.player2:
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=False)
                         self.button_ai_player.player(selected=True)
                     if self.button_standard_game_mode.graphic.collidepoint(pos):
-                        self.game_mode = "standard"
+                        self.game_mode = constants.STANDARD
                         self.button_standard_game_mode.standard(selected=True)
                         self.button_swap2_game_mode.swap2(selected=False)
                     if self.button_swap2_game_mode.graphic.collidepoint(pos):
-                        self.game_mode = "swap2"
+                        self.game_mode = constants.SWAP2
                         self.button_standard_game_mode.standard()
                         self.button_swap2_game_mode.swap2(True)
                     pygame.display.update()
