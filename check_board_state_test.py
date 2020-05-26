@@ -10,8 +10,7 @@ class TestCheckBoardStateClass(unittest.TestCase):
 
     def setUp(self):
         """Creating clear board 15x15 to set on this board situations to test."""
-        self.board = [[constants.EMPTY for i in range(constants.BOARD_SIZE)] for j in range(
-            constants.BOARD_SIZE)]
+        self.board = check_board_state.create_board()
 
     def test_check_rows(self):
         """Checking if method check_rows() returns True if put five consecutive stones in row."""

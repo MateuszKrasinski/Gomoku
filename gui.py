@@ -39,7 +39,7 @@ MESSAGE_OPPONENT_X = 226
 MESSAGE_NUMBERS_X = 30
 MESSAGE_WIN_HEIGHT = 40
 CHOOSE_COLOR_X = 112
-pygame.init()
+pygame.font.init()
 pygame.display.set_caption(WINDOW_CAPTION)
 
 
@@ -157,7 +157,7 @@ def draw_board(square):
     pygame.display.update()
 
 
-class OnMove():
+class OnMove:
     """Class shows on right of the board text "Turn:" and "player's name" and stone graphic."""
 
     def __init__(self):
@@ -269,7 +269,7 @@ class ButtonChooseColor:
                     (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
 
 
-class ButtonChooseOpponent():
+class ButtonChooseOpponent:
     """Class creates on middle above board text "Opponent:" and buttons "Ai" and Player"."""
 
     def __init__(self, next_=0):
@@ -307,7 +307,7 @@ class ButtonChooseOpponent():
         message("PLAYER", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
 
 
-class ButtonChooseMode():
+class ButtonChooseMode:
     """Class creates on right above board text"Mode: ",buttons with names "standard" and "swap2"."""
 
     def __init__(self, number):

@@ -8,24 +8,24 @@ import standard
 import swap2
 import constants
 
-GameSettings = collections.namedtuple("GameSettings", "player1 player2 game_mode")
+GameSettings = collections.namedtuple("GameSettings", "player1 player2 player_on_move game_mode")
 
 
 def main():
     while True:
 
         gra = game.Game()
-        game_settings = gra.menu()
-        if game_settings:
-            if game_settings[3] == constants.STANDARD:
+        settings = gra.menu()
+        if settings:
+            if settings.game_mode == constants.STANDARD:
                 while True:
-                    if not standard.Standard(game_settings[0], game_settings[1],
-                                             game_settings[2]).playgame() == constants.RESTART:
+                    if not standard.Standard(settings.player1, settings.player2,
+                                             settings.player_on_move).playgame() == constants.RESTART:
                         break
-            elif game_settings[3] == constants.SWAP2:
+            elif settings[3] == constants.SWAP2:
                 while True:
-                    if not swap2.Swap2(game_settings[0], game_settings[1],
-                                       game_settings[2]).playgame() == constants.RESTART:
+                    if not swap2.Swap2(settings.player1, settings.player2,
+                                       settings.player_on_move).playgame() == constants.RESTART:
                         break
 
         pygame.display.update()

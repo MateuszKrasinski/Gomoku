@@ -9,6 +9,9 @@ import check_board_state
 import players
 import constants
 
+GameSettings = collections.namedtuple("GameSettings", "player1 player2 player_on_move game_mode")
+LastMove = collections.namedtuple("LastMove", "i j")
+
 
 class Game:
     """Class set up all need operations and attributes to play game."""
@@ -19,8 +22,7 @@ class Game:
         gui.draw_background()
         self.game_running = True
         self.game_move_number = 0
-        self.game_board = [[constants.EMPTY for i in range(constants.BOARD_SIZE)] for j in range(
-            constants.BOARD_SIZE)]
+        self.game_board = check_board_state.create_board()
         self.game_arbiter = check_board_state.CheckBoardState(self.game_board)
         self.played_moves = []
         self.player1 = players.HumanPlayer(constants.PLAYER1_NAME, constants.WHITE)
@@ -38,7 +40,7 @@ class Game:
         self.button_ai_player = gui.ButtonChooseOpponent(1)
         self.button_standard_game_mode = gui.ButtonChooseMode(0)
         self.button_swap2_game_mode = gui.ButtonChooseMode(1)
-        self.LastMove = collections.namedtuple("LastMove", "i j")
+        self.LastMove = LastMove
 
     def menu(self):
         """Setting up on screen menu where player can choose game options before start. """
@@ -58,7 +60,9 @@ class Game:
                     pos = pygame.mouse.get_pos()
                     if self.button_new_game.graphic.collidepoint(pos):
                         self.game_running = False
-                        return self.player1, self.player2, self.player_on_move, self.game_mode
+                        return GameSettings(player1=self.player1, player2=self.player2,
+                                            player_on_move=self.player_on_move,
+                                            game_mode=self.game_mode)
                     if self.button_white_stone.graphic.collidepoint(pos):
                         self.player_on_move = self.player1
                         self.gui_on_move.white(self.player1.name)

@@ -24,7 +24,6 @@ class BasePlayer:
 
     def make_move(self):
         """Virtual function"""
-        pass
 
 
 class HumanPlayer(BasePlayer):
@@ -55,7 +54,7 @@ class AiPlayer(BasePlayer):
         threatening_squares: from CheckBoardState moves to deal with open three stones situation.
         """
         super(AiPlayer, self).__init__(name, stone_color)
-        self.game_board = board
+        self.game_board = []
         self.arbiter = check_board_state.CheckBoardState(self.game_board)
         self.arbiter = check_board_state.CheckBoardState
         self.squares_with_neighbours = [set() for i in range(MAX_DEPTH + 1)]
@@ -160,6 +159,7 @@ class AiPlayer(BasePlayer):
         self.game_board = game_board
         self.PlayedMovesInGame = played_moves
         self.arbiter = check_board_state.CheckBoardState(self.game_board)
+        self.squares_with_neighbours[0].clear()
         for i, j in self.PlayedMovesInGame:
             self.add_neighbours_squares(i, j, 0, self.PlayedMovesInGame)
         best_score = -math.inf
