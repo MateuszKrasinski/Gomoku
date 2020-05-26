@@ -28,7 +28,7 @@ def main():
                     if not standard.Standard(screen, settings.player1, settings.player2,
                                              settings.player_on_move).playgame() == constants.RESTART:
                         break
-            elif settings[3] == constants.SWAP2:
+            elif settings.game_mode == constants.SWAP2:
                 while True:
                     if not swap2.Swap2(screen, settings.player1, settings.player2,
                                        settings.player_on_move).playgame() == constants.RESTART:

@@ -37,14 +37,14 @@ class CheckBoardState:
                         return True
                     if consecutive == 4:
                         if self.game_board[i][j + 1] == constants.EMPTY and self.game_board[i][
-                            j - 4] == constants.EMPTY:
+                                j - 4] == constants.EMPTY:
                             if self.game_board[i][j] == constants.WHITE:
                                 self.four_stones += 1
                             else:
                                 self.four_stones -= 1
                     elif consecutive == 3:
                         if self.game_board[i][j + 1] == constants.EMPTY and self.game_board[i][
-                            j - 3] == constants.EMPTY:
+                                j - 3] == constants.EMPTY:
                             if self.game_board[i][j] == constants.WHITE:
                                 self.three_stones += 1
                             else:
@@ -53,7 +53,7 @@ class CheckBoardState:
                             self.good_moves.append((i, j - 3, GOOD_MOVE))
                     elif consecutive == 2:
                         if self.game_board[i][j + 1] == constants.EMPTY and self.game_board[i][
-                            j - 2] == constants.EMPTY:
+                                j - 2] == constants.EMPTY:
                             if self.game_board[i][j] == constants.WHITE:
                                 self.two_stones += 1
                             else:
@@ -78,7 +78,7 @@ class CheckBoardState:
                             self.two_stones -= 1
                     elif consecutive == 3:
                         if self.game_board[i + 1][j] == constants.EMPTY and self.game_board[i - 3][
-                            j] == constants.EMPTY:
+                                j] == constants.EMPTY:
                             if self.game_board[i][j] == constants.WHITE:
                                 self.three_stones += 1
                             else:
@@ -87,7 +87,7 @@ class CheckBoardState:
                             self.good_moves.append((i + -3, j, GOOD_MOVE))
                     elif consecutive == 4:
                         if self.game_board[i + 1][j] == constants.EMPTY and self.game_board[i - 4][
-                            j] == constants.EMPTY:
+                                j] == constants.EMPTY:
                             if self.game_board[i][j] == constants.WHITE:
                                 self.four_stones += 1
                             else:
@@ -102,7 +102,7 @@ class CheckBoardState:
             consecutive = 1
             for j in range(0, constants.BOARD_SIZE - i - 1):
                 if self.game_board[j + i][j] == self.game_board[j + i + 1][
-                    j + 1] != constants.EMPTY:
+                        j + 1] != constants.EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
@@ -136,7 +136,7 @@ class CheckBoardState:
             consecutive = 1
             for j in range(0, constants.BOARD_SIZE - i - 1):
                 if self.game_board[j][j + i] == self.game_board[j + 1][
-                    j + i + 1] != constants.EMPTY:
+                        j + i + 1] != constants.EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
@@ -170,7 +170,7 @@ class CheckBoardState:
             consecutive = 1
             for j in range(0, i):
                 if self.game_board[i - j][j] == self.game_board[i - j - 1][
-                    j + 1] != constants.EMPTY:
+                        j + 1] != constants.EMPTY:
                     consecutive += 1
                 else:
                     if consecutive == WIN:
@@ -212,21 +212,21 @@ class CheckBoardState:
                         return True
                     if consecutive == 2 and constants.BOARD_SIZE - 1 - j + 2 <= 14:
                         if self.game_board[i + j + 1][
-                            constants.BOARD_SIZE - 1 - j - 1] == constants.EMPTY:
+                                constants.BOARD_SIZE - 1 - j - 1] == constants.EMPTY:
                             if self.game_board[i + j - 2][
-                                constants.BOARD_SIZE - 1 - j + 2] == constants.EMPTY:
+                                    constants.BOARD_SIZE - 1 - j + 2] == constants.EMPTY:
                                 if self.game_board[i + j][
-                                    constants.BOARD_SIZE - 1 - j] == constants.WHITE:
+                                        constants.BOARD_SIZE - 1 - j] == constants.WHITE:
                                     self.two_stones += 1
                                 else:
                                     self.two_stones -= 1
                     elif consecutive == 3 and constants.BOARD_SIZE - 1 - j + 3 <= 14:
                         if self.game_board[i + j + 1][
-                            constants.BOARD_SIZE - 1 - j - 1] == constants.EMPTY:
+                                constants.BOARD_SIZE - 1 - j - 1] == constants.EMPTY:
                             if self.game_board[i + j - 3][
-                                constants.BOARD_SIZE - 1 - j + 3] == constants.EMPTY:
+                                    constants.BOARD_SIZE - 1 - j + 3] == constants.EMPTY:
                                 if self.game_board[i + j][
-                                    constants.BOARD_SIZE - 1 - j] == constants.WHITE:
+                                        constants.BOARD_SIZE - 1 - j] == constants.WHITE:
                                     self.three_stones += 1
                                 else:
                                     self.three_stones -= 1
@@ -237,9 +237,9 @@ class CheckBoardState:
                     elif consecutive == 4 and constants.BOARD_SIZE - 1 - j + 3 <= 14:
                         if self.game_board[i + j][constants.BOARD_SIZE - 1 - j] == constants.EMPTY:
                             if self.game_board[i + j - 4][
-                                constants.BOARD_SIZE - 1 - j + 4] == constants.EMPTY:
+                                    constants.BOARD_SIZE - 1 - j + 4] == constants.EMPTY:
                                 if self.game_board[i + j][
-                                    constants.BOARD_SIZE - 1 - j] == constants.WHITE:
+                                        constants.BOARD_SIZE - 1 - j] == constants.WHITE:
                                     self.four_stones += 1
                                 else:
                                     self.four_stones -= 1
@@ -264,10 +264,10 @@ class CheckBoardState:
     def check_board_state(self, name):
         """Return true if finds end of game."""
         if self.check_win():
-            gui.message_win(self.screen, name)
+            gui.Gui(self.screen).message_win(name)
             return True
         if self.check_draw():
-            gui.message_draw(self.screen)
+            gui.Gui(self.screen).message_win(name)
             return True
         return False
 

@@ -13,6 +13,7 @@ MAX_MOVE_TIME_SECONDS = 6
 MAX_DEPTH = 5
 NUMBER_OF_CHECKED_SQUARES = 10
 NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX = 11
+PlayedMovesInGame = collections.namedtuple("PlayedMovesInGame", "i j ")
 
 
 class BasePlayer:
@@ -49,7 +50,7 @@ class AiPlayer(BasePlayer):
         squares_with_neighbours: Set contains all squares with neighbours , list index is
         depth during mini_max algorithm we also checked squares with neighbours
         squares_with_neighbours_sorted:Above set sorted by mini_max evaluation after one move
-        self.PlayedMovesInGame: all moves played in game during adding new squares to
+        self.played_moves_in_game: all moves played in game during adding new squares to
         squares_with_neighbours need to remove played moves from this set
         threatening_squares: from CheckBoardState moves to deal with open three stones situation.
         """
@@ -60,7 +61,7 @@ class AiPlayer(BasePlayer):
         self.squares_with_neighbours = [set() for i in range(MAX_DEPTH + 1)]
         self.squares_with_neighbours_sorted = [set() for i in range(MAX_DEPTH + 1)]
         self.predicted_moves_in_mini_max = set()
-        self.PlayedMovesInGame = collections.namedtuple("PlayedMovesInGame", "i j ")
+        self.played_moves_in_game = PlayedMovesInGame
         self.threatening_squares = []
 
     def mini_max(self, board, depth, max_depth, is_maximizing, alpha=-math.inf, beta=math.inf):
@@ -90,7 +91,7 @@ class AiPlayer(BasePlayer):
             for i, j, evaluation in evaluated_min_max_set[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX -
                                                             depth)]:
                 board[i][j] = constants.BLACK
-                self.add_neighbours_squares(i, j, depth + 1, self.PlayedMovesInGame)
+                self.add_neighbours_squares(i, j, depth + 1, self.played_moves_in_game)
                 score = self.mini_max(board, depth + 1, MAX_DEPTH, False, alpha,
                                       beta)
                 self.remove_neighbours_squares(i, j, depth + 1)
@@ -113,7 +114,7 @@ class AiPlayer(BasePlayer):
         for i, j, evaluation in evaluated_min_max_set[:(NUMBER_OF_CHECKED_SQUARES_IN_MINI_MAX -
                                                         depth)]:
             board[i][j] = constants.WHITE
-            self.add_neighbours_squares(i, j, depth + 1, self.PlayedMovesInGame)
+            self.add_neighbours_squares(i, j, depth + 1, self.played_moves_in_game)
             score = self.mini_max(board, depth + 1, MAX_DEPTH, True, alpha, beta)
             self.remove_neighbours_squares(i, j, depth + 1)
             board[i][j] = constants.EMPTY
@@ -157,11 +158,11 @@ class AiPlayer(BasePlayer):
     def make_move(self, game_board, played_moves, black_color=True):
         """Method returns best move as tuple (i,j), first using forced_move() else mini_max()."""
         self.game_board = game_board
-        self.PlayedMovesInGame = played_moves
+        self.played_moves_in_game = played_moves
         self.arbiter = check_board_state.CheckBoardState(self.screen, self.game_board)
         self.squares_with_neighbours[0].clear()
-        for i, j in self.PlayedMovesInGame:
-            self.add_neighbours_squares(i, j, 0, self.PlayedMovesInGame)
+        for i, j in self.played_moves_in_game:
+            self.add_neighbours_squares(i, j, 0, self.played_moves_in_game)
         best_score = -math.inf
         if self.forced_move() is not False:
             i, j = self.forced_move()
@@ -182,7 +183,7 @@ class AiPlayer(BasePlayer):
             if self.game_board[i][j] == constants.EMPTY and (
                     time.time() - start_time < MAX_MOVE_TIME_SECONDS):
                 self.game_board[i][j] = constants.BLACK
-                self.add_neighbours_squares(i, j, 1, self.PlayedMovesInGame)
+                self.add_neighbours_squares(i, j, 1, self.played_moves_in_game)
                 score = self.mini_max(self.game_board, 1, MAX_DEPTH, False)
                 self.remove_neighbours_squares(i, j, 1)
                 self.game_board[i][j] = constants.EMPTY
@@ -216,15 +217,15 @@ class AiPlayer(BasePlayer):
         neighbours = {(i - top, j + right), (i - top, j - left), (i - top, j),
                       (i, j - left), (i, j + right), (i + down, j + right),
                       (i + down, j - left), (i + down, j)}
-        self.PlayedMovesInGame = played_moves
+        self.played_moves_in_game = played_moves
         if depth == 0:
             self.squares_with_neighbours[0] = self.squares_with_neighbours[depth].union(neighbours)
-            self.squares_with_neighbours[depth].difference_update(self.PlayedMovesInGame)
+            self.squares_with_neighbours[depth].difference_update(self.played_moves_in_game)
         elif depth != 0:
             self.predicted_moves_in_mini_max.add((i, j))
             self.squares_with_neighbours[depth] = self.squares_with_neighbours[depth - 1].union(
                 neighbours)
-            self.squares_with_neighbours[depth].difference_update(self.PlayedMovesInGame)
+            self.squares_with_neighbours[depth].difference_update(self.played_moves_in_game)
             self.squares_with_neighbours[depth].difference_update(
                 self.predicted_moves_in_mini_max)
 
