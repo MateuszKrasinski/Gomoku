@@ -131,19 +131,19 @@ class Game:
         """Making move on given i,j from ai_move or selected by user."""
         if self.player_on_move.stone_color == constants.WHITE:
             if self.game_move_number > 0:
-                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
-                self.gui_board[i][j].draw_black_stone(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_empty_square(self.last_move.i, self.last_move.j)
+                self.gui_board[i][j].draw_black_stone(self.last_move.i, self.last_move.j)
             self.gui_board[i][j].draw_white_stone(i, j, True)
             self.game_board[i][j] = constants.WHITE
         else:
             if self.game_move_number > 0:
-                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
-                self.gui_board[i][j].draw_white_stone(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_empty_square(self.last_move.i, self.last_move.j)
+                self.gui_board[i][j].draw_white_stone(self.last_move.i, self.last_move.j)
             self.gui_board[i][j].draw_black_stone(i, j, True)
             self.game_board[i][j] = constants.BLACK
         self.game_move_number += 1
         self.played_moves.append((i, j))
-        self.last_move = i, j
+        self.last_move = LastMove(i=i, j=j)
 
     def playgame(self):
         """Base function handling all game rules  chosen in menu mode"""
