@@ -54,7 +54,7 @@ class AiPlayer(BasePlayer):
         squares_with_neighbours need to remove played moves from this set
         threatening_squares: from CheckBoardState moves to deal with open three stones situation.
         """
-        super(AiPlayer, self).__init__(name, stone_color)
+        super().__init__(name, stone_color)
         self.screen = screen
         self.game_board = board
         self.arbiter = check_board_state.CheckBoardState(self.screen, self.game_board)
