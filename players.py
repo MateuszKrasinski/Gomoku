@@ -42,7 +42,7 @@ class HumanPlayer(BasePlayer):
 class AiPlayer(BasePlayer):
     """Class contains all needed attributes and methods to create artificial intelligence player."""
 
-    def __init__(self, board, stone_color, name="AI"):
+    def __init__(self, screen, board, stone_color, name="AI"):
         """Init with board from game module and all needed attributes to make ai optimal.
         Attributes:
         arbiter:   Class which allows to check if game is finished
@@ -54,9 +54,9 @@ class AiPlayer(BasePlayer):
         threatening_squares: from CheckBoardState moves to deal with open three stones situation.
         """
         super(AiPlayer, self).__init__(name, stone_color)
-        self.game_board = []
-        self.arbiter = check_board_state.CheckBoardState(self.game_board)
-        self.arbiter = check_board_state.CheckBoardState
+        self.screen = screen
+        self.game_board = board
+        self.arbiter = check_board_state.CheckBoardState(self.screen, self.game_board)
         self.squares_with_neighbours = [set() for i in range(MAX_DEPTH + 1)]
         self.squares_with_neighbours_sorted = [set() for i in range(MAX_DEPTH + 1)]
         self.predicted_moves_in_mini_max = set()
@@ -158,7 +158,7 @@ class AiPlayer(BasePlayer):
         """Method returns best move as tuple (i,j), first using forced_move() else mini_max()."""
         self.game_board = game_board
         self.PlayedMovesInGame = played_moves
-        self.arbiter = check_board_state.CheckBoardState(self.game_board)
+        self.arbiter = check_board_state.CheckBoardState(self.screen, self.game_board)
         self.squares_with_neighbours[0].clear()
         for i, j in self.PlayedMovesInGame:
             self.add_neighbours_squares(i, j, 0, self.PlayedMovesInGame)

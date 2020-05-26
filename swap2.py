@@ -12,9 +12,9 @@ import constants
 class Swap2(game.Game):
     """Class contains all methods and attributes to play game on standard rules."""
 
-    def __init__(self, player1, player2, on_move):
+    def __init__(self,screen, player1, player2, on_move):
         """Init from base class init and override with arguments chosen in game menu."""
-        super(Swap2, self).__init__()
+        super(Swap2, self).__init__(screen)
         self.player1 = player1
         self.player2 = player2
         self.player_on_move = on_move
@@ -119,7 +119,7 @@ class Swap2(game.Game):
 
     def playgame(self):
         """Starts game on swap2 rules restart or back to menu depending of clicked button."""
-        gui.draw_board(self.gui_board)
+        self.gui.draw_board(self.gui_board)
         while True:
             if self.game_move_number < 3:
                 self.game_opening()

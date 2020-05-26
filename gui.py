@@ -15,7 +15,6 @@ class Color(Enum):
     BUTTON = (88, 61, 0)
 
 
-WINDOW_CAPTION = 'Gomoku'
 BIG_FONT_SIZE = 40
 FONT_SIZE = 14
 SETTINGS_TOP_MARGIN = 10
@@ -27,6 +26,7 @@ SQUARE_MARGIN = 2
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 545
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
 BOARD_WIDTH = int(constants.BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN) + 2 * SQUARE_MARGIN)
 LEFT_MARGIN = int(SCREEN_WIDTH - (constants.BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN))) // 4
 TOP_MARGIN = int(SCREEN_HEIGHT - constants.BOARD_SIZE * (SQUARE_WIDTH + SQUARE_MARGIN)) // 2
@@ -39,43 +39,63 @@ MESSAGE_OPPONENT_X = 226
 MESSAGE_NUMBERS_X = 30
 MESSAGE_WIN_HEIGHT = 40
 CHOOSE_COLOR_X = 112
-pygame.font.init()
-pygame.display.set_caption(WINDOW_CAPTION)
 
 
-def message(what, x, y, font_size, color=Color.BLACK.value):
-    """Functions shows text on the screen with given arguments."""
-    font = pygame.font.SysFont("Arial", font_size, 1)
-    text = font.render(what, True, color)
-    SCREEN.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
+class Gui:
+    """Base class"""
+    def __init__(self, screen):
+        self.screen = screen
+        print(self.screen)
+
+    def message(self, what, x, y, font_size, color=Color.BLACK.value):
+        """Functions shows text on the screen with given arguments."""
+        font = pygame.font.SysFont("Arial", font_size, 1)
+        text = font.render(what, True, color)
+        self.screen.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
+
+    def message_win(self, name):
+        """Function prints on top of the screen message player_name wins!"""
+        rect = pygame.Rect(LEFT_MARGIN, 2 * BORDER, BOARD_WIDTH - 2 * BORDER,
+                           MESSAGE_WIN_HEIGHT - 2 * BORDER)
+        border = pygame.Rect(LEFT_MARGIN - BORDER, BORDER, BOARD_WIDTH, MESSAGE_WIN_HEIGHT)
+        pygame.draw.rect(self.screen, Color.BLACK.value, border)
+        pygame.draw.rect(self.screen, Color.BUTTON.value, rect)
+        self.message(name + " WINS!", rect.center[0], rect.center[1], BIG_FONT_SIZE)
+        pygame.display.update()
+
+    def message_draw(self):
+        """Function prints on top of the screen message DRAW!"""
+        rect = pygame.Rect(LEFT_MARGIN, 2 * BORDER, BOARD_WIDTH - 2 * BORDER,
+                           MESSAGE_WIN_HEIGHT - 2 * BORDER)
+        border = pygame.Rect(LEFT_MARGIN - BORDER, BORDER, BOARD_WIDTH, MESSAGE_WIN_HEIGHT)
+        pygame.draw.rect(self.screen, Color.BLACK.value, border)
+        pygame.draw.rect(self.screen, Color.BUTTON.value, rect)
+        self.message("DRAW!", rect.center[0], rect.center[1], BIG_FONT_SIZE)
+        pygame.display.update()
+
+    def draw_board(self, board):
+        """Functions draws on the middle-screen empty board"""
+        for i in range(0, constants.BOARD_SIZE):
+            for j in range(0, constants.BOARD_SIZE):
+                board[i][j].draw_empty_square(i, j)
+            self.message("{}".format(i + 1), LEFT_MARGIN - SQUARE_WIDTH // 3 - BORDER, TOP_MARGIN +
+                         SQUARE_WIDTH // 2 + i * (SQUARE_WIDTH + SQUARE_MARGIN) + SQUARE_WIDTH // 2,
+                         FONT_SIZE)
+        for i in range(constants.BOARD_SIZE):
+            self.message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
+                         (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
+        pygame.display.update()
+
+    def draw_background(self):
+        """Function draws background of the game"""
+        self.screen.fill(Color.BOARD.value)
 
 
-def message_win(name):
-    """Function prints on top of the screen message player_name wins!"""
-    rect = pygame.Rect(LEFT_MARGIN, 2 * BORDER, BOARD_WIDTH - 2 * BORDER,
-                       MESSAGE_WIN_HEIGHT - 2 * BORDER)
-    border = pygame.Rect(LEFT_MARGIN - BORDER, BORDER, BOARD_WIDTH, MESSAGE_WIN_HEIGHT)
-    pygame.draw.rect(SCREEN, Color.BLACK.value, border)
-    pygame.draw.rect(SCREEN, Color.BUTTON.value, rect)
-    message(name + " WINS!", rect.center[0], rect.center[1], BIG_FONT_SIZE)
-    pygame.display.update()
-
-
-def message_draw():
-    """Function prints on top of the screen message DRAW!"""
-    rect = pygame.Rect(LEFT_MARGIN, 2 * BORDER, BOARD_WIDTH - 2 * BORDER,
-                       MESSAGE_WIN_HEIGHT - 2 * BORDER)
-    border = pygame.Rect(LEFT_MARGIN - BORDER, BORDER, BOARD_WIDTH, MESSAGE_WIN_HEIGHT)
-    pygame.draw.rect(SCREEN, Color.BLACK.value, border)
-    pygame.draw.rect(SCREEN, Color.BUTTON.value, rect)
-    message("DRAW!", rect.center[0], rect.center[1], BIG_FONT_SIZE)
-    pygame.display.update()
-
-
-class Square:
+class Square(Gui):
     """Class contains methods connect with graphic on one square of the board"""
 
-    def __init__(self):
+    def __init__(self, screen):
+        super(Square, self).__init__(screen)
         """Init graphic with basic values """
         self.graphic = pygame.Rect(SQUARE_MARGIN + SQUARE_MARGIN + LEFT_MARGIN,
                                    SQUARE_WIDTH + SQUARE_MARGIN + TOP_MARGIN, SQUARE_WIDTH,
@@ -87,14 +107,14 @@ class Square:
 
     def draw_empty_square(self, j, i):
         """Method draws empty square on i,j position in board"""
-        self.border = pygame.draw.rect(SCREEN, Color.BLACK.value,
+        self.border = pygame.draw.rect(self.screen, Color.BLACK.value,
                                        (
                                            i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN
                                            - BORDER,
                                            j * SQUARE_WIDTH + j * SQUARE_MARGIN + SQUARE_WIDTH // 2
                                            + TOP_MARGIN - BORDER, SQUARE_WIDTH + 2 * BORDER,
                                            SQUARE_WIDTH + 2 * BORDER))
-        self.graphic = pygame.draw.rect(SCREEN, Color.BOARD.value,
+        self.graphic = pygame.draw.rect(self.screen, Color.BOARD.value,
                                         (
                                             i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN,
                                             j * SQUARE_WIDTH + j * SQUARE_MARGIN + SQUARE_WIDTH // 2
@@ -103,17 +123,17 @@ class Square:
     def draw_white_stone(self, j, i, last_move=False):
         """Method draws white stone on square(j,i) if square is last move draws golden frame"""
         if last_move:
-            self.border = pygame.draw.rect(SCREEN, Color.SELECTED.value,
+            self.border = pygame.draw.rect(self.screen, Color.SELECTED.value,
                                            (i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN
                                             - BORDER, j * SQUARE_WIDTH + j * SQUARE_MARGIN +
                                             SQUARE_WIDTH // 2 + TOP_MARGIN - BORDER, SQUARE_WIDTH
                                             + 2 * BORDER, SQUARE_WIDTH + 2 * BORDER))
-            self.graphic = pygame.draw.rect(SCREEN, Color.BOARD.value,
+            self.graphic = pygame.draw.rect(self.screen, Color.BOARD.value,
                                             (i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN,
                                              j * SQUARE_WIDTH + j * SQUARE_MARGIN + SQUARE_WIDTH
                                              // 2 + TOP_MARGIN, SQUARE_WIDTH, SQUARE_WIDTH))
 
-        self.graphic = pygame.draw.circle(SCREEN, Color.WHITE.value,
+        self.graphic = pygame.draw.circle(self.screen, Color.WHITE.value,
                                           (i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN +
                                            SQUARE_WIDTH // 2, j * SQUARE_WIDTH + j *
                                            SQUARE_MARGIN + SQUARE_WIDTH // 2 + TOP_MARGIN +
@@ -122,18 +142,18 @@ class Square:
     def draw_black_stone(self, j, i, last_move=False):
         """Method draws black stone on square(j,i) if square is last move draws golden frame."""
         if last_move:
-            self.border = pygame.draw.rect(SCREEN, Color.SELECTED.value,
+            self.border = pygame.draw.rect(self.screen, Color.SELECTED.value,
                                            (
                                                i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN
                                                - BORDER, j * SQUARE_WIDTH + j * SQUARE_MARGIN +
                                                SQUARE_WIDTH // 2 + TOP_MARGIN - BORDER, SQUARE_WIDTH
                                                + 2 * BORDER, SQUARE_WIDTH + 2 * BORDER))
-            self.graphic = pygame.draw.rect(SCREEN, Color.BOARD.value,
+            self.graphic = pygame.draw.rect(self.screen, Color.BOARD.value,
                                             (
                                                 i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN,
                                                 j * SQUARE_WIDTH + j * SQUARE_MARGIN + SQUARE_WIDTH
                                                 // 2 + TOP_MARGIN, SQUARE_WIDTH, SQUARE_WIDTH))
-        self.graphic = pygame.draw.circle(SCREEN, Color.BLACK.value,
+        self.graphic = pygame.draw.circle(self.screen, Color.BLACK.value,
                                           (
                                               i * SQUARE_WIDTH + i * SQUARE_MARGIN + LEFT_MARGIN +
                                               SQUARE_WIDTH // 2,
@@ -143,70 +163,58 @@ class Square:
                                           SQUARE_WIDTH // 2)
 
 
-def draw_board(square):
-    """Functions draws on the middle-screen empty board"""
-    for i in range(0, constants.BOARD_SIZE):
-        for j in range(0, constants.BOARD_SIZE):
-            square[i][j].draw_empty_square(i, j)
-        message("{}".format(i + 1), LEFT_MARGIN - SQUARE_WIDTH // 3 - BORDER, TOP_MARGIN +
-                SQUARE_WIDTH // 2 + i * (SQUARE_WIDTH + SQUARE_MARGIN) + SQUARE_WIDTH // 2,
-                FONT_SIZE)
-    for i in range(constants.BOARD_SIZE):
-        message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
-                (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
-    pygame.display.update()
-
-
-class OnMove:
+class OnMove(Gui):
     """Class shows on right of the board text "Turn:" and "player's name" and stone graphic."""
 
-    def __init__(self):
+    def __init__(self, screen):
+        super(OnMove, self).__init__(screen)
         self.left_down_corner_x = SCREEN_WIDTH - 70
         self.left_down_corner_y = SCREEN_HEIGHT // 3.5
         self.button_width = RIGHT_MARGIN * 1 // 10
         self.button_height = RIGHT_MARGIN * 1 // 10
         self.graphic = pygame.Rect(
             self.left_down_corner_x, self.left_down_corner_y, self.button_width, self.button_height)
-        message("Turn:", self.graphic.center[0], self.graphic.center[1] - 20, FONT_SIZE)
+        self.message("Turn:", self.graphic.center[0], self.graphic.center[1] - 20, FONT_SIZE)
         self.graphic_stone = pygame.Rect(SCREEN_WIDTH - RIGHT_MARGIN,
                                          SCREEN_HEIGHT // 3.5, SQUARE_WIDTH * 2.8,
                                          SQUARE_WIDTH // 2)
 
     def black(self, name):
         """Draws black stone as graphic on turn and name given in function."""
-        pygame.draw.rect(SCREEN, Color.BOARD.value, self.graphic_stone)
-        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
-                self.graphic_stone.center[1], FONT_SIZE)
-        self.graphic = pygame.draw.circle(SCREEN, Color.BLACK.value, (
+        pygame.draw.rect(self.screen, Color.BOARD.value, self.graphic_stone)
+        self.message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
+                     self.graphic_stone.center[1], FONT_SIZE)
+        self.graphic = pygame.draw.circle(self.screen, Color.BLACK.value, (
             int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - BORDER,
             int(self.graphic_stone.midright[1]) - BORDER), int(SQUARE_WIDTH // 2.5))
         pygame.display.update()
 
     def white(self, name):
         """Draws black stone as graphic on turn and name given in function."""
-        pygame.draw.rect(SCREEN, Color.BOARD.value, self.graphic_stone)
-        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
-                self.graphic_stone.center[1], FONT_SIZE)
-        self.graphic = pygame.draw.circle(SCREEN, Color.WHITE.value, (
+        pygame.draw.rect(self.screen, Color.BOARD.value, self.graphic_stone)
+        self.message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
+                     self.graphic_stone.center[1], FONT_SIZE)
+        self.graphic = pygame.draw.circle(self.screen, Color.WHITE.value, (
             int(self.graphic_stone.midright[0]) - SQUARE_WIDTH // 2 - BORDER,
             int(self.graphic_stone.midright[1] - BORDER)), int(SQUARE_WIDTH // 2.5))
         pygame.display.update()
 
     def change_message(self, name):
         """Method changes player's name on turn."""
-        pygame.draw.rect(SCREEN, Color.BOARD.value, (SCREEN_WIDTH - RIGHT_MARGIN,
-                                                     SCREEN_HEIGHT // 3.5,
-                                                     int(SQUARE_WIDTH * 1.7),
-                                                     SQUARE_WIDTH // 2))
-        message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
-                self.graphic_stone.center[1], FONT_SIZE)
+        pygame.draw.rect(self.screen, Color.BOARD.value, (SCREEN_WIDTH - RIGHT_MARGIN,
+                                                          SCREEN_HEIGHT // 3.5,
+                                                          int(SQUARE_WIDTH * 1.7),
+                                                          SQUARE_WIDTH // 2))
+        self.message(name, SCREEN_WIDTH - RIGHT_MARGIN + RIGHT_MARGIN // 4 + 2 * BORDER,
+                     self.graphic_stone.center[1], FONT_SIZE)
         pygame.display.update()
 
 
-class ButtonRightMenu:
+class ButtonRightMenu(Gui):
     """Class creating right menu with button with given names."""
 
-    def __init__(self, next_=0, name="Button"):
+    def __init__(self, screen, next_=0, name="Button"):
+        super(ButtonRightMenu, self).__init__(screen)
         """Init all buttons properties, "next" argument allows to create next button under last."""
         self.button_width = RIGHT_MARGIN * 9 // 10
         self.button_height = SQUARE_WIDTH
@@ -219,15 +227,16 @@ class ButtonRightMenu:
             self.button_height + 2 * BORDER)
         self.graphic = pygame.Rect(
             self.left_down_corner_x, self.left_down_corner_y, self.button_width, self.button_height)
-        pygame.draw.rect(SCREEN, Color.BLACK.value, self.border)
-        pygame.draw.rect(SCREEN, Color.BUTTON.value, self.graphic)
-        message(name, self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
+        pygame.draw.rect(self.screen, Color.BLACK.value, self.border)
+        pygame.draw.rect(self.screen, Color.BUTTON.value, self.graphic)
+        self.message(name, self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
 
 
-class ButtonChooseColor:
+class ButtonChooseColor(Gui):
     """Class creates on left above board  text "Choose color:" buttons white and black stone."""
 
-    def __init__(self, next_=0):
+    def __init__(self, screen, next_=0):
+        super(ButtonChooseColor, self).__init__(screen)
         """Init with all button properties, "next" allows creating buttons next to each other."""
         self.button_width = SQUARE_WIDTH
         self.button_height = SQUARE_WIDTH
@@ -244,35 +253,40 @@ class ButtonChooseColor:
     def black(self, selected=False):
         """Method draws black stone if button is selected drawing golden frame. """
         if selected:
-            pygame.draw.rect(SCREEN, Color.SELECTED.value, self.border)
+            pygame.draw.rect(self.screen, Color.SELECTED.value, self.border)
         else:
-            pygame.draw.rect(SCREEN, Color.BLACK.value, self.border)
-        pygame.draw.rect(SCREEN, Color.BUTTON.value, self.graphic)
-        pygame.draw.circle(SCREEN, Color.BLACK.value, self.graphic.center, STONE_RADIUS - BORDER)
+            pygame.draw.rect(self.screen, Color.BLACK.value, self.border)
+        pygame.draw.rect(self.screen, Color.BUTTON.value, self.graphic)
+        pygame.draw.circle(self.screen, Color.BLACK.value, self.graphic.center,
+                           STONE_RADIUS - BORDER)
 
     def white(self, selected=False):
         """Method draws white stone if button is selected drawing golden frame. """
-        message("Choose color:", MESSAGE_CHOOSE_COLOR_X, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
+        self.message("Choose color:", MESSAGE_CHOOSE_COLOR_X, SETTINGS_MESSAGE_TOP_MARGIN,
+                     FONT_SIZE)
         if selected:
-            pygame.draw.rect(SCREEN, Color.SELECTED.value, self.border)
+            pygame.draw.rect(self.screen, Color.SELECTED.value, self.border)
         else:
-            pygame.draw.rect(SCREEN, Color.BLACK.value, self.border)
-        pygame.draw.rect(SCREEN, Color.BUTTON.value, self.graphic)
-        pygame.draw.circle(SCREEN, Color.WHITE.value, self.graphic.center, STONE_RADIUS - BORDER)
+            pygame.draw.rect(self.screen, Color.BLACK.value, self.border)
+        pygame.draw.rect(self.screen, Color.BUTTON.value, self.graphic)
+        pygame.draw.circle(self.screen, Color.WHITE.value, self.graphic.center,
+                           STONE_RADIUS - BORDER)
 
     def hide(self):
         """Methods covers all buttons after choosing colors during game in swap2 mode."""
-        pygame.draw.rect(SCREEN, Color.BOARD.value, (0, self.left_down_corner_y - BORDER,
-                                                     BOARD_WIDTH, self.button_height + 2 * BORDER))
+        pygame.draw.rect(self.screen, Color.BOARD.value, (0, self.left_down_corner_y - BORDER,
+                                                          BOARD_WIDTH,
+                                                          self.button_height + 2 * BORDER))
         for i in range(constants.BOARD_SIZE):
-            message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
-                    (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
+            self.message("{}".format(i + 1), LEFT_MARGIN + SQUARE_WIDTH // BORDER + i *
+                         (SQUARE_WIDTH + SQUARE_MARGIN), MESSAGE_NUMBERS_X, FONT_SIZE)
 
 
-class ButtonChooseOpponent:
+class ButtonChooseOpponent(Gui):
     """Class creates on middle above board text "Opponent:" and buttons "Ai" and Player"."""
 
-    def __init__(self, next_=0):
+    def __init__(self, screen, next_=0):
+        super(ButtonChooseOpponent, self).__init__(screen)
         """Init with all button properties, "next" allows creating buttons next to each other."""
         self.left_down_corner_x = SCREEN_WIDTH // 2 + next_ * (SQUARE_WIDTH * 2 + 2 * BORDER) \
                                   - SQUARE_WIDTH
@@ -290,27 +304,28 @@ class ButtonChooseOpponent:
     def AI(self, selected=False):
         """Method draws text "Opponent:"and button "AI" if button is selected draws golden frame."""
         if selected:
-            pygame.draw.rect(SCREEN, Color.SELECTED.value, self.border)
+            pygame.draw.rect(self.screen, Color.SELECTED.value, self.border)
         else:
-            pygame.draw.rect(SCREEN, Color.BLACK.value, self.border)
-        pygame.draw.rect(SCREEN, Color.BUTTON.value, self.graphic)
-        message("AI", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
-        message("Opponent:", MESSAGE_OPPONENT_X, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
+            pygame.draw.rect(self.screen, Color.BLACK.value, self.border)
+        pygame.draw.rect(self.screen, Color.BUTTON.value, self.graphic)
+        self.message("AI", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
+        self.message("Opponent:", MESSAGE_OPPONENT_X, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
 
     def player(self, selected=False):
         """Method draws button "Player" if button is selected draws golden frame."""
         if selected:
-            pygame.draw.rect(SCREEN, Color.SELECTED.value, self.border)
+            pygame.draw.rect(self.screen, Color.SELECTED.value, self.border)
         else:
-            pygame.draw.rect(SCREEN, Color.BLACK.value, self.border)
-        pygame.draw.rect(SCREEN, Color.BUTTON.value, self.graphic)
-        message("PLAYER", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
+            pygame.draw.rect(self.screen, Color.BLACK.value, self.border)
+        pygame.draw.rect(self.screen, Color.BUTTON.value, self.graphic)
+        self.message("PLAYER", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
 
 
-class ButtonChooseMode:
+class ButtonChooseMode(Gui):
     """Class creates on right above board text"Mode: ",buttons with names "standard" and "swap2"."""
 
-    def __init__(self, number):
+    def __init__(self, screen, number):
+        super(ButtonChooseMode, self).__init__(screen)
         self.left_down_corner_x = BOARD_WIDTH - SQUARE_WIDTH + number * (BUTTON_CHOOSE_MODE_WIDTH +
                                                                          2 * BORDER)
         self.left_down_corner_y = SETTINGS_TOP_MARGIN
@@ -327,23 +342,18 @@ class ButtonChooseMode:
     def standard(self, selected=False):
         """Method draws "Rules:"a nd button "standard" if button is selected draws golden frame."""
         if selected:
-            pygame.draw.rect(SCREEN, Color.SELECTED.value, self.border)
+            pygame.draw.rect(self.screen, Color.SELECTED.value, self.border)
         else:
-            pygame.draw.rect(SCREEN, Color.BLACK.value, self.border)
-        self.graphic = pygame.draw.rect(SCREEN, Color.BUTTON.value, self.graphic)
-        message("Rules:", MESSAGE_RULES_X, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
-        message("standard", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
+            pygame.draw.rect(self.screen, Color.BLACK.value, self.border)
+        self.graphic = pygame.draw.rect(self.screen, Color.BUTTON.value, self.graphic)
+        self.message("Rules:", MESSAGE_RULES_X, SETTINGS_MESSAGE_TOP_MARGIN, FONT_SIZE)
+        self.message("standard", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
 
     def swap2(self, selected=False):
         """Method draws "swap2:"a nd button "standard" if button is selected draws golden frame."""
         if selected:
-            pygame.draw.rect(SCREEN, Color.SELECTED.value, self.border)
+            pygame.draw.rect(self.screen, Color.SELECTED.value, self.border)
         else:
-            pygame.draw.rect(SCREEN, Color.BLACK.value, self.border)
-        self.graphic = pygame.draw.rect(SCREEN, Color.BUTTON.value, self.graphic)
-        message("swap2", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)
-
-
-def draw_background():
-    """Function draws background of the game"""
-    SCREEN.fill(Color.BOARD.value)
+            pygame.draw.rect(self.screen, Color.BLACK.value, self.border)
+        self.graphic = pygame.draw.rect(self.screen, Color.BUTTON.value, self.graphic)
+        self.message("swap2", self.graphic.center[0], self.graphic.center[1], FONT_SIZE)

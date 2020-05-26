@@ -11,9 +11,9 @@ import constants
 class Standard(game.Game):
     """Class contains all methods and attributes to play game on standard rules."""
 
-    def __init__(self, player1, player2, on_move):
+    def __init__(self, screen, player1, player2, on_move):
         """Init from base class init and override with arguments chosen in game menu."""
-        super(Standard, self).__init__()
+        super(Standard, self).__init__(screen)
         self.player1 = player1
         self.player2 = player2
         self.player_on_move = on_move
@@ -24,7 +24,7 @@ class Standard(game.Game):
 
     def playgame(self):
         """Starts game on standard rules restart or back to menu depending of clicked button."""
-        gui.draw_board(self.gui_board)
+        self.gui.draw_board(self.gui_board)
         while True:
             pygame.display.update()
             pygame.time.delay(100)

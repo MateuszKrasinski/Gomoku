@@ -16,30 +16,31 @@ LastMove = collections.namedtuple("LastMove", "i j")
 class Game:
     """Class set up all need operations and attributes to play game."""
 
-    def __init__(self):
+    def __init__(self, screen):
         """Init Game with all needed attributes. """
-
-        gui.draw_background()
+        self.screen = screen
+        self.gui = gui.Gui(self.screen)
+        self.gui.draw_background()
         self.game_running = True
         self.game_move_number = 0
         self.game_board = check_board_state.create_board()
-        self.game_arbiter = check_board_state.CheckBoardState(self.game_board)
+        self.game_arbiter = check_board_state.CheckBoardState(self.screen, self.game_board)
         self.played_moves = []
         self.player1 = players.HumanPlayer(constants.PLAYER1_NAME, constants.WHITE)
-        self.player2 = players.AiPlayer(self.game_board, constants.BLACK)
+        self.player2 = players.AiPlayer(self.screen, self.game_board, constants.BLACK)
         self.player_on_move = self.player1
         self.game_mode = constants.STANDARD
-        self.gui_board = [[gui.Square() for i in range(constants.BOARD_SIZE)] for j in range(
-            constants.BOARD_SIZE)]
-        self.gui_on_move = gui.OnMove()
-        self.button_new_game = gui.ButtonRightMenu(0, constants.RESTART)
-        self.button_menu = gui.ButtonRightMenu(1, constants.MENU)
-        self.button_white_stone = gui.ButtonChooseColor(0)
-        self.button_black_stone = gui.ButtonChooseColor(1)
-        self.button_ai_opponent = gui.ButtonChooseOpponent(0)
-        self.button_ai_player = gui.ButtonChooseOpponent(1)
-        self.button_standard_game_mode = gui.ButtonChooseMode(0)
-        self.button_swap2_game_mode = gui.ButtonChooseMode(1)
+        self.gui_board = [[gui.Square(self.screen) for i in range(constants.BOARD_SIZE)] for j in
+                          range(constants.BOARD_SIZE)]
+        self.gui_on_move = gui.OnMove(self.screen)
+        self.button_new_game = gui.ButtonRightMenu(self.screen, 0, constants.RESTART)
+        self.button_menu = gui.ButtonRightMenu(self.screen, 1, constants.MENU)
+        self.button_white_stone = gui.ButtonChooseColor(self.screen, 0)
+        self.button_black_stone = gui.ButtonChooseColor(self.screen, 1)
+        self.button_ai_opponent = gui.ButtonChooseOpponent(self.screen, 0)
+        self.button_ai_player = gui.ButtonChooseOpponent(self.screen, 1)
+        self.button_standard_game_mode = gui.ButtonChooseMode(self.screen, 0)
+        self.button_swap2_game_mode = gui.ButtonChooseMode(self.screen, 1)
         self.LastMove = LastMove
 
     def menu(self):
