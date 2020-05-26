@@ -286,8 +286,8 @@ class ButtonChooseOpponent(Gui):
     def __init__(self, screen, next_=0):
         super(ButtonChooseOpponent, self).__init__(screen)
         """Init with all button properties, "next" allows creating buttons next to each other."""
-        self.left_down_corner_x = SCREEN_WIDTH // 2 + next_ * (SQUARE_WIDTH * 2 + 2 * BORDER) \
-                                  - SQUARE_WIDTH
+        self.left_down_corner_x = SCREEN_WIDTH // 2 + next_ * (SQUARE_WIDTH
+                                                               * 2 + 2 * BORDER) - SQUARE_WIDTH
         self.left_down_corner_y = SETTINGS_TOP_MARGIN
         self.button_width = SQUARE_WIDTH * 2
         self.button_height = SQUARE_WIDTH
