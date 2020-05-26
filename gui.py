@@ -93,7 +93,7 @@ class Square(Gui):
     """Class contains methods connect with graphic on one square of the board"""
 
     def __init__(self, screen):
-        super(Square, self).__init__(screen)
+        super().__init__(screen)
         """Init graphic with basic values """
         self.graphic = pygame.Rect(SQUARE_MARGIN + SQUARE_MARGIN + LEFT_MARGIN,
                                    SQUARE_WIDTH + SQUARE_MARGIN + TOP_MARGIN, SQUARE_WIDTH,
@@ -165,7 +165,7 @@ class OnMove(Gui):
     """Class shows on right of the board text "Turn:" and "player's name" and stone graphic."""
 
     def __init__(self, screen):
-        super(OnMove, self).__init__(screen)
+        super().__init__(screen)
         self.left_down_corner_x = SCREEN_WIDTH - 70
         self.left_down_corner_y = SCREEN_HEIGHT // 3.5
         self.button_width = RIGHT_MARGIN * 1 // 10
@@ -212,7 +212,7 @@ class ButtonRightMenu(Gui):
     """Class creating right menu with button with given names."""
 
     def __init__(self, screen, next_=0, name="Button"):
-        super(ButtonRightMenu, self).__init__(screen)
+        super().__init__(screen)
         """Init all buttons properties, "next" argument allows to create next button under last."""
         self.button_width = RIGHT_MARGIN * 9 // 10
         self.button_height = SQUARE_WIDTH
@@ -234,7 +234,7 @@ class ButtonChooseColor(Gui):
     """Class creates on left above board  text "Choose color:" buttons white and black stone."""
 
     def __init__(self, screen, next_=0):
-        super(ButtonChooseColor, self).__init__(screen)
+        super().__init__(screen)
         """Init with all button properties, "next" allows creating buttons next to each other."""
         self.button_width = SQUARE_WIDTH
         self.button_height = SQUARE_WIDTH
@@ -284,7 +284,7 @@ class ButtonChooseOpponent(Gui):
     """Class creates on middle above board text "Opponent:" and buttons "Ai" and Player"."""
 
     def __init__(self, screen, next_=0):
-        super(ButtonChooseOpponent, self).__init__(screen)
+        super().__init__(screen)
         """Init with all button properties, "next" allows creating buttons next to each other."""
         self.left_down_corner_x = SCREEN_WIDTH // 2 + next_ * (SQUARE_WIDTH
                                                                * 2 + 2 * BORDER) - SQUARE_WIDTH
@@ -323,7 +323,7 @@ class ButtonChooseMode(Gui):
     """Class creates on right above board text"Mode: ",buttons with names "standard" and "swap2"."""
 
     def __init__(self, screen, number):
-        super(ButtonChooseMode, self).__init__(screen)
+        super().__init__(screen)
         self.left_down_corner_x = BOARD_WIDTH - SQUARE_WIDTH + number * (BUTTON_CHOOSE_MODE_WIDTH +
                                                                          2 * BORDER)
         self.left_down_corner_y = SETTINGS_TOP_MARGIN

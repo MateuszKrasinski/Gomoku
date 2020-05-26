@@ -3,7 +3,6 @@ import sys
 
 import pygame
 
-import gui
 import game
 import constants
 
@@ -13,7 +12,7 @@ class Standard(game.Game):
 
     def __init__(self, screen, player1, player2, on_move):
         """Init from base class init and override with arguments chosen in game menu."""
-        super(Standard, self).__init__(screen)
+        super().__init__(screen)
         self.player1 = player1
         self.player2 = player2
         self.player_on_move = on_move

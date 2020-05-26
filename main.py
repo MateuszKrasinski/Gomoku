@@ -15,7 +15,7 @@ WINDOW_CAPTION = 'Gomoku'
 
 
 def main():
-    pygame.font.init()
+    pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption(WINDOW_CAPTION)
     while True:

@@ -4,7 +4,6 @@ import random
 
 import pygame
 
-import gui
 import game
 import constants
 
@@ -12,9 +11,9 @@ import constants
 class Swap2(game.Game):
     """Class contains all methods and attributes to play game on standard rules."""
 
-    def __init__(self,screen, player1, player2, on_move):
+    def __init__(self, screen, player1, player2, on_move):
         """Init from base class init and override with arguments chosen in game menu."""
-        super(Swap2, self).__init__(screen)
+        super().__init__(screen)
         self.player1 = player1
         self.player2 = player2
         self.player_on_move = on_move
