@@ -41,7 +41,7 @@ class Game:
         self.button_ai_player = gui.ButtonChooseOpponent(self.screen, 1)
         self.button_standard_game_mode = gui.ButtonChooseMode(self.screen, 0)
         self.button_swap2_game_mode = gui.ButtonChooseMode(self.screen, 1)
-        self.LastMove = LastMove
+        self.last_move = LastMove
 
     def menu(self):
         """Setting up on screen menu where player can choose game options before start. """
@@ -70,20 +70,23 @@ class Game:
                         self.button_white_stone.white(selected=True)
                         self.button_black_stone.black(selected=False)
                     if self.button_black_stone.graphic.collidepoint(pos):
+                        self.player_on_move = self.player2
                         self.gui_on_move.black(self.player2.name)
                         self.button_white_stone.white(selected=False)
                         self.button_black_stone.black(selected=True)
-                        self.player_on_move = self.player2
                     if self.button_ai_opponent.graphic.collidepoint(pos):
-                        self.player2 = players.AiPlayer(self.game_board, self.player2.stone_color)
-                        if self.player_on_move == self.player2:
+                        self.player2 = players.AiPlayer(self.screen, self.game_board,
+                                                        self.player2.stone_color)
+                        if self.player_on_move.stone_color == self.player2.stone_color:
+                            self.player_on_move = self.player2
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=True)
                         self.button_ai_player.player(selected=False)
                     if self.button_ai_player.graphic.collidepoint(pos):
                         self.player2 = players.HumanPlayer(constants.PLAYER2_NAME,
                                                            self.player2.stone_color)
-                        if self.player_on_move == self.player2:
+                        if self.player_on_move.stone_color == self.player2.stone_color:
+                            self.player_on_move = self.player2
                             self.gui_on_move.black(self.player2.name)
                         self.button_ai_opponent.AI(selected=False)
                         self.button_ai_player.player(selected=True)
@@ -128,19 +131,19 @@ class Game:
         """Making move on given i,j from ai_move or selected by user."""
         if self.player_on_move.stone_color == constants.WHITE:
             if self.game_move_number > 0:
-                self.gui_board[i][j].draw_empty_square(self.LastMove[0], self.LastMove[1])
-                self.gui_board[i][j].draw_black_stone(self.LastMove[0], self.LastMove[1])
+                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_black_stone(self.last_move[0], self.last_move[1])
             self.gui_board[i][j].draw_white_stone(i, j, True)
             self.game_board[i][j] = constants.WHITE
         else:
             if self.game_move_number > 0:
-                self.gui_board[i][j].draw_empty_square(self.LastMove[0], self.LastMove[1])
-                self.gui_board[i][j].draw_white_stone(self.LastMove[0], self.LastMove[1])
+                self.gui_board[i][j].draw_empty_square(self.last_move[0], self.last_move[1])
+                self.gui_board[i][j].draw_white_stone(self.last_move[0], self.last_move[1])
             self.gui_board[i][j].draw_black_stone(i, j, True)
             self.game_board[i][j] = constants.BLACK
         self.game_move_number += 1
         self.played_moves.append((i, j))
-        self.LastMove = i, j
+        self.last_move = i, j
 
     def playgame(self):
         """Base function handling all game rules  chosen in menu mode"""

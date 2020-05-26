@@ -43,9 +43,9 @@ CHOOSE_COLOR_X = 112
 
 class Gui:
     """Base class"""
+
     def __init__(self, screen):
         self.screen = screen
-        print(self.screen)
 
     def message(self, what, x, y, font_size, color=Color.BLACK.value):
         """Functions shows text on the screen with given arguments."""
